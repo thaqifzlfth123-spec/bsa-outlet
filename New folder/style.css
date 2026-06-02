@@ -1,0 +1,275 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    background:#f5f7fa;
+}
+
+.hero-section{
+    background:linear-gradient(
+        135deg,
+        #0f172a,
+        #1e293b
+    );
+
+    color:white;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+}
+
+.hero-section h1{
+    font-size:4rem;
+    font-weight:700;
+}
+
+.hero-section p{
+    font-size:1.3rem;
+    color:#fbbf24;
+}
+
+.login-card{
+    width:100%;
+    max-width:450px;
+    padding:40px;
+    background:white;
+    border-radius:20px;
+    box-shadow:0 15px 35px rgba(0,0,0,.1);
+}
+
+.form-control{
+    height:50px;
+}
+
+.btn-warning{
+    height:50px;
+    font-weight:600;
+}
+
+@media(max-width:768px){
+
+    .login-card{
+        margin:20px;
+        padding:30px;
+    }
+
+}
+.custom-navbar{
+    background:#0f172a;
+    padding:15px 0;
+}
+
+.navbar-brand{
+    color:#fbbf24 !important;
+}
+
+.nav-link{
+    color:white !important;
+    margin-left:10px;
+}
+
+.nav-link:hover{
+    color:#fbbf24 !important;
+}
+
+.home-hero{
+    min-height:65vh;
+    background:linear-gradient(135deg, #0f172a, #1e293b);
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.home-hero h1{
+    font-size:4rem;
+    font-weight:700;
+}
+
+.home-hero p{
+    font-size:1.2rem;
+    color:#e5e7eb;
+}
+
+.category-card{
+    height:220px;
+    background:white;
+    border-radius:20px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    text-decoration:none;
+    color:#0f172a;
+    padding:25px;
+    transition:.3s;
+}
+
+.category-card:hover{
+    transform:translateY(-8px);
+    background:#fbbf24;
+    color:#0f172a;
+}
+
+.category-card h3{
+    font-weight:700;
+}
+
+.about-section{
+    background:#f8fafc;
+    padding:60px 20px;
+}
+
+.about-section p{
+    max-width:700px;
+    margin:auto;
+    color:#475569;
+}
+
+.footer{
+    background:#0f172a;
+    color:white;
+    text-align:center;
+    padding:20px;
+}
+
+.footer p{
+    margin:0;
+}
+
+@media(max-width:768px){
+    .home-hero h1{
+        font-size:2.5rem;
+    }
+
+    .home-hero{
+        min-height:55vh;
+        padding:40px 20px;
+    }
+}
+.page-header{
+    background:linear-gradient(135deg, #0f172a, #1e293b);
+    color:white;
+    padding:70px 20px;
+}
+
+.page-header h1{
+    font-size:3rem;
+    font-weight:700;
+}
+
+.page-header p{
+    color:#e5e7eb;
+}
+
+.product-card{
+    background:white;
+    border-radius:20px;
+    padding:25px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+    transition:.3s;
+    height:100%;
+}
+
+.product-card:hover{
+    transform:translateY(-8px);
+}
+
+.product-img{
+    height:180px;
+    background:#e5e7eb;
+    border-radius:15px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:1.5rem;
+    font-weight:600;
+    color:#64748b;
+    margin-bottom:20px;
+}
+
+.product-card h4{
+    font-weight:700;
+}
+
+.product-card p{
+    color:#64748b;
+}
+
+.product-card h5{
+    color:#0f172a;
+    font-weight:700;
+    margin-bottom:15px;
+}
+.info-box{
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+.info-box p{
+    margin:5px 0;
+}
+
+.cart-table-box{
+    background:white;
+    padding:25px;
+    border-radius:20px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+.cart-table-box thead{
+    background:#0f172a;
+    color:white;
+}
+
+.cart-summary{
+    background:#f8fafc;
+    padding:25px;
+    border-radius:20px;
+    border-left:5px solid #fbbf24;
+}
+
+.cart-summary h4{
+    font-weight:700;
+    margin-bottom:15px;
+}
+.receipt-box{
+    background:white;
+    padding:35px;
+    border-radius:20px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+.receipt-box h3{
+    font-weight:700;
+    color:#0f172a;
+}
+
+.receipt-box thead{
+    background:#0f172a;
+    color:white;
+}
+
+.receipt-total{
+    background:#f8fafc;
+    padding:25px;
+    border-radius:15px;
+    border-left:5px solid #fbbf24;
+}
+
+.receipt-total p{
+    margin-bottom:8px;
+}
+
+@media(max-width:768px){
+    .receipt-box{
+        padding:25px;
+    }
+}
