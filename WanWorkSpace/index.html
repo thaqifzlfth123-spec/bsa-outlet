@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BSA Outlet | All-in-One Platform</title>
+    <style>
+        /* ========================================
+           ULTRA PREMIUM CSS - ALL IN ONE
+           Glassmorphism + Neon + Animations
+        ======================================== */
+        
+        @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: radial-gradient(circle at 20% 30%, #0a0a0a, #000000);
+            color: #ffffff;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1a1a2e; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(135deg, #f5b042, #ff6b6b); border-radius: 10px; }
+        
+        h1 { font-size: 2.5rem; font-weight: 800; background: linear-gradient(135deg, #F5B042, #FF6B6B, #C084FC); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 1rem; }
+        h2 { font-size: 1.8rem; font-weight: 700; margin-bottom: 1.5rem; position: relative; display: inline-block; }
+        h2::after { content: ''; position: absolute; bottom: -8px; left: 0; width: 60%; height: 3px; background: linear-gradient(90deg, #F5B042, #FF6B6B); border-radius: 3px; }
+        h3 { font-size: 1.3rem; font-weight: 600; margin-bottom: 0.5rem; }
+        p { color: rgba(255,255,255,0.7); }
+        
+        .animated-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background: radial-gradient(circle at 20% 30%, #0a0a0a, #000000); }
+        .animated-bg::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 70% 60%, rgba(245,176,66,0.08), transparent 50%); animation: bgPulse 8s ease-in-out infinite; }
+        .animated-bg::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 30% 80%, rgba(255,107,107,0.05), transparent 50%); animation: bgPulse 8s ease-in-out infinite reverse; }
+        @keyframes bgPulse { 0%, 100% { opacity: 0.5; transform: scale(1); } 50% { opacity: 1; transform: scale(1.1); } }
+        
+        .orb { position: fixed; border-radius: 50%; filter: blur(80px); z-index: -1; animation: float 20s ease-in-out infinite; }
+        .orb-1 { width: 400px; height: 400px; background: rgba(245,176,66,0.15); top: -100px; left: -100px; }
+        .orb-2 { width: 500px; height: 500px; background: rgba(255,107,107,0.1); bottom: -150px; right: -150px; animation-delay: -5s; }
+        .orb-3 { width: 300px; height: 300px; background: rgba(192,132,252,0.1); top: 50%; left: 50%; transform: translate(-50%, -50%); animation-delay: -10s; }
+        @keyframes float { 0%, 100% { transform: translate(0, 0) scale(1); } 33% { transform: translate(30px, -30px) scale(1.1); } 66% { transform: translate(-20px, 20px) scale(0.9); } }
+        
+        .container { max-width: 1280px; margin: 0 auto; padding: 0 2rem; }
+        
+        /* Navigation - Dynamic */
+        .navbar { position: sticky; top: 0; z-index: 1000; background: rgba(0,0,0,0.7); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .nav-container { max-width: 1280px; margin: 0 auto; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+        .logo { font-size: 1.8rem; font-weight: 800; background: linear-gradient(135deg, #F5B042, #FF6B6B); -webkit-background-clip: text; background-clip: text; color: transparent; cursor: pointer; }
+        .logo span { font-size: 0.8rem; font-weight: 400; color: rgba(255,255,255,0.5); }
+        .nav-links { display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap; }
+        .nav-links a { color: rgba(255,255,255,0.8); font-weight: 500; transition: all 0.3s ease; cursor: pointer; text-decoration: none; }
+        .nav-links a:hover { color: #F5B042; }
+        .cart-link { background: linear-gradient(135deg, #F5B042, #FF6B6B); color: #000 !important; padding: 0.5rem 1.2rem !important; border-radius: 50px; font-weight: 700 !important; }
+        .logout-btn { background: rgba(255,68,68,0.2); color: #ff4444 !important; padding: 0.5rem 1.2rem !important; border-radius: 50px; border: 1px solid #ff4444; }
+        .logout-btn:hover { background: #ff4444; color: #fff !important; }
+        
+        /* Back Button */
+        .back-btn { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.1); padding: 8px 20px; border-radius: 50px; cursor: pointer; margin-bottom: 20px; transition: 0.3s; border: 1px solid rgba(255,255,255,0.2); width: fit-content; }
+        .back-btn:hover { background: rgba(245,176,66,0.2); border-color: #F5B042; transform: translateX(-5px); }
+        
+        .btn, button { display: inline-block; padding: 0.8rem 2rem; font-size: 1rem; font-weight: 600; text-align: center; border: none; border-radius: 50px; cursor: pointer; transition: all 0.3s ease; background: linear-gradient(135deg, #F5B042, #FF6B6B); color: #000; }
+        .btn:hover, button:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(245,176,66,0.4); }
+        .btn-outline { background: transparent; border: 2px solid #F5B042; color: #F5B042; }
+        .btn-outline:hover { background: linear-gradient(135deg, #F5B042, #FF6B6B); color: #000; }
+        
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem; margin: 2rem 0; }
+        .product-card { background: rgba(255,255,255,0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; overflow: hidden; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .product-card:hover { transform: translateY(-10px) scale(1.02); border-color: rgba(245,176,66,0.5); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+        .product-image { height: 200px; background: linear-gradient(135deg, #1a1a2e, #16213e); display: flex; align-items: center; justify-content: center; font-size: 4rem; }
+        .product-info { padding: 1.5rem; }
+        .product-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .product-price { font-size: 1.5rem; font-weight: 700; background: linear-gradient(135deg, #F5B042, #FF6B6B); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 1rem; }
+        .product-price::before { content: 'RM '; }
+        .product-card .btn { width: 100%; }
+        
+        .category-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+        .category-card { background: rgba(255,255,255,0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 2rem; text-align: center; transition: all 0.3s ease; cursor: pointer; }
+        .category-card:hover { transform: translateY(-5px); background: linear-gradient(135deg, rgba(245,176,66,0.2), rgba(255,107,107,0.2)); border-color: #F5B042; }
+        .category-icon { font-size: 3rem; margin-bottom: 1rem; }
+        
+        .table-container { overflow-x: auto; background: rgba(255,255,255,0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; margin: 2rem 0; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 1rem; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        th { background: linear-gradient(135deg, rgba(245,176,66,0.2), rgba(255,107,107,0.2)); font-weight: 700; color: #F5B042; }
+        tr:hover { background: rgba(255,255,255,0.05); }
+        .status-paid { background: linear-gradient(135deg, #00c853, #009624); color: white; padding: 0.25rem 0.75rem; border-radius: 50px; font-size: 0.8rem; display: inline-block; }
+        .status-pending { background: linear-gradient(135deg, #ff6b6b, #ff4444); color: white; padding: 0.25rem 0.75rem; border-radius: 50px; font-size: 0.8rem; display: inline-block; }
+        
+        .form-container { max-width: 600px; margin: 2rem auto; background: rgba(255,255,255,0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 2.5rem; }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; color: #F5B042; }
+        .form-group input, .form-group select { width: 100%; padding: 0.8rem 1rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; font-size: 1rem; color: white; }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: #F5B042; box-shadow: 0 0 15px rgba(245,176,66,0.3); }
+        .radio-group { display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap; }
+        .radio-group label { display: inline-flex; align-items: center; gap: 0.5rem; font-weight: normal; color: rgba(255,255,255,0.8); cursor: pointer; }
+        
+        .cart-container { display: grid; grid-template-columns: 1fr 350px; gap: 2rem; margin: 2rem 0; }
+        @media (max-width: 768px) { .cart-container { grid-template-columns: 1fr; } }
+        .cart-items { background: rgba(255,255,255,0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; overflow: hidden; }
+        .cart-summary { background: rgba(255,255,255,0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 1.5rem; height: fit-content; position: sticky; top: 100px; }
+        .summary-row { display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .summary-row.total { font-size: 1.3rem; font-weight: 700; background: linear-gradient(135deg, #F5B042, #FF6B6B); -webkit-background-clip: text; background-clip: text; color: transparent; border-bottom: none; padding-top: 1rem; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); flex-wrap: wrap; gap: 10px; }
+        .qty-btn { background: rgba(255,255,255,0.1); padding: 5px 12px; margin: 0 5px; border-radius: 5px; cursor: pointer; display: inline-block; }
+        
+        .admin-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+        .stat-card { background: rgba(255,255,255,0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 1.5rem; text-align: center; transition: all 0.3s; cursor: pointer; }
+        .stat-card:hover { transform: translateY(-5px); border-color: #F5B042; }
+        .stat-number { font-size: 2.5rem; font-weight: 800; background: linear-gradient(135deg, #F5B042, #FF6B6B); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        
+        .page { display: none; animation: fadeInUp 0.5s ease forwards; }
+        .page.active { display: block; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        footer { background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); border-top: 1px solid rgba(255,255,255,0.1); text-align: center; padding: 2rem; margin-top: 4rem; }
+        @media (max-width: 768px) { .nav-container { flex-direction: column; gap: 1rem; } .nav-links { justify-content: center; } h1 { font-size: 2rem; } .container { padding: 0 1rem; } }
+        
+        .hero { text-align: center; padding: 60px 20px; background: linear-gradient(135deg, rgba(245,176,66,0.15), rgba(255,107,107,0.1)); border-radius: 40px; margin: 20px 0 50px; }
+        .hero h1 { font-size: 4rem; margin-bottom: 20px; }
+        .hero-badge { display: inline-block; background: rgba(245,176,66,0.2); padding: 0.3rem 1rem; border-radius: 50px; font-size: 0.8rem; color: #F5B042; margin-bottom: 1.5rem; }
+        .empty-cart { text-align: center; padding: 60px; }
+        .receipt { max-width: 500px; margin: 40px auto; background: rgba(255,255,255,0.05); border-radius: 24px; padding: 30px; }
+        .stock-list { display: grid; gap: 20px; }
+        .category-section { background: rgba(255,255,255,0.03); border-radius: 20px; padding: 20px; margin-bottom: 20px; }
+        .category-section h3 { color: #F5B042; margin-bottom: 15px; }
+        .stock-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); flex-wrap: wrap; gap: 10px; }
+        .user-type-toggle { display: flex; justify-content: center; gap: 1rem; margin-bottom: 2rem; background: rgba(255,255,255,0.05); padding: 0.5rem; border-radius: 60px; max-width: 300px; margin-left: auto; margin-right: auto; }
+        .type-btn { padding: 12px 30px; border-radius: 50px; cursor: pointer; transition: all 0.3s; text-align: center; font-weight: 600; background: transparent; color: rgba(255,255,255,0.6); }
+        .type-btn.active { background: linear-gradient(135deg, #F5B042, #FF6B6B); color: #000; box-shadow: 0 5px 20px rgba(245,176,66,0.3); }
+        .staff-fields { display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); }
+        .staff-fields.show { display: block; }
+        .loading-spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid rgba(0,0,0,0.3); border-radius: 50%; border-top-color: #000; animation: spin 0.6s linear infinite; margin-right: 8px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        button:disabled { opacity: 0.7; cursor: not-allowed; }
+        .notification { position: fixed; top: 20px; right: 20px; padding: 15px 20px; border-radius: 10px; color: white; z-index: 9999; animation: slideIn 0.3s ease; }
+        .notification.success { background: linear-gradient(135deg, #00c853, #009624); }
+        .notification.error { background: linear-gradient(135deg, #ff4444, #cc0000); }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .delete-btn { background: #ff4444; color: white; border: none; padding: 5px 15px; border-radius: 20px; cursor: pointer; }
+        .delete-btn:hover { background: #cc0000; }
+        .about-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin: 2rem 0; }
+        .about-card { background: rgba(255,255,255,0.03); border-radius: 24px; padding: 2rem; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s; }
+        .about-card:hover { transform: translateY(-5px); border-color: #F5B042; }
+        .about-icon { font-size: 3rem; margin-bottom: 1rem; }
+        .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
+        .team-member { text-align: center; padding: 1.5rem; background: rgba(255,255,255,0.02); border-radius: 20px; transition: all 0.3s; }
+        .team-member:hover { background: rgba(255,255,255,0.05); transform: translateY(-3px); }
+        .team-avatar { font-size: 4rem; margin-bottom: 0.5rem; }
+        .quick-actions { display: flex; gap: 15px; flex-wrap: wrap; margin: 30px 0; }
+        
+        /* History Stack untuk Back Button */
+        .page-history { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="animated-bg"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<nav class="navbar">
+    <div class="nav-container">
+        <div class="logo" onclick="goHome()">BSA OUTLET <span>Premium Fashion</span></div>
+        <div class="nav-links" id="navLinks">
+            <!-- Dynamic Navbar will be inserted here by JavaScript -->
+        </div>
+    </div>
+</nav>
+
+<main>
+    <div class="container">
+        <!-- Back Button -->
+        <div id="backButtonContainer" style="margin-bottom: 20px;"></div>
+        
+        <!-- PAGE 1: HOME -->
+        <div id="home" class="page active">
+            <div class="hero">
+                <span class="hero-badge">✦ NEW SEASON 2026 ✦</span>
+                <h1>Find Your <span style="color:#F5B042">Perfect Style</span></h1>
+                <p>Discover premium fashion collections from BSA Outlet. Quality meets elegance.</p>
+                <button class="btn" onclick="showPage('menswear')">Shop Now →</button>
+            </div>
+            <div class="admin-stats">
+                <div class="stat-card"><div class="stat-number">500+</div><div class="stat-label">Products Available</div></div>
+                <div class="stat-card"><div class="stat-number">10K+</div><div class="stat-label">Happy Customers</div></div>
+                <div class="stat-card"><div class="stat-number">24/7</div><div class="stat-label">Customer Support</div></div>
+            </div>
+            <h2>Shop by Category</h2>
+            <div class="category-grid">
+                <div class="category-card" onclick="showPage('menswear')"><div class="category-icon">👔</div><h3>Menswear</h3><p>Stylish outfits for men</p></div>
+                <div class="category-card" onclick="showPage('womenswear')"><div class="category-icon">👗</div><h3>Womenswear</h3><p>Modern fashion for women</p></div>
+                <div class="category-card" onclick="showPage('kids')"><div class="category-icon">🧸</div><h3>Kids</h3><p>Comfortable kids clothing</p></div>
+                <div class="category-card" onclick="showPage('shoe')"><div class="category-icon">👟</div><h3>Shoe</h3><p>Footwear for every style</p></div>
+            </div>
+        </div>
+        
+        <!-- PAGE 2-5: PRODUCT PAGES -->
+        <div id="menswear" class="page"><h1>Menswear Collection</h1><div class="products-grid" id="menswearProducts"></div></div>
+        <div id="womenswear" class="page"><h1>Womenswear Collection</h1><div class="products-grid" id="womenswearProducts"></div></div>
+        <div id="kids" class="page"><h1>Kids Wear</h1><div class="products-grid" id="kidsProducts"></div></div>
+        <div id="shoe" class="page"><h1>Shoe Collection</h1><div class="products-grid" id="shoeProducts"></div></div>
+        
+        <!-- PAGE 6: ABOUT -->
+        <div id="about" class="page">
+            <h1>About BSA Outlet</h1>
+            <div class="about-grid">
+                <div class="about-card"><div class="about-icon">🏢</div><h3>Our Story</h3><p>Founded in 2020, bringing premium fashion to everyone.</p></div>
+                <div class="about-card"><div class="about-icon">🎯</div><h3>Our Mission</h3><p>Quality fashion with exceptional service.</p></div>
+                <div class="about-card"><div class="about-icon">💎</div><h3>Our Values</h3><p>Quality • Integrity • Innovation</p></div>
+            </div>
+            <h2>Meet Our Team</h2>
+            <div class="team-grid">
+                <div class="team-member"><div class="team-avatar">👩‍💼</div><h3>Sarah Ahmad</h3><p>CEO & Founder</p></div>
+                <div class="team-member"><div class="team-avatar">👨‍💻</div><h3>Amirul Hakim</h3><p>Operations Director</p></div>
+                <div class="team-member"><div class="team-avatar">👩‍🎨</div><h3>Lina Tan</h3><p>Creative Director</p></div>
+            </div>
+        </div>
+        
+        <!-- PAGE 7: CART -->
+        <div id="cart" class="page">
+            <h1>Shopping Cart</h1>
+            <div class="cart-container">
+                <div class="cart-items" id="cartItems"></div>
+                <div class="cart-summary" id="cartSummary"></div>
+            </div>
+        </div>
+        
+        <!-- PAGE 8: RECEIPT -->
+        <div id="receipt" class="page">
+            <div class="receipt">
+                <div style="font-size: 4rem; text-align: center;">✅</div>
+                <div style="text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px;"><h2 style="color:#F5B042;">Payment Successful!</h2><p>Thank you for your purchase</p></div>
+                <div id="orderId" style="background: rgba(245,176,66,0.2); padding: 10px; border-radius: 10px; text-align: center; margin: 20px 0;"></div>
+                <h3>Order Summary</h3>
+                <div id="receiptItems"></div>
+                <div id="receiptTotal"></div>
+                <div style="text-align: center; margin-top: 30px;"><button class="btn" onclick="showPage('home')">Continue Shopping</button></div>
+            </div>
+        </div>
+        
+        <!-- PAGE 9: SIGN IN -->
+        <div id="signin" class="page">
+            <div class="form-container">
+                <h2 style="text-align: center;">Welcome Back</h2>
+                <div class="user-type-toggle">
+                    <div id="customerToggle" class="type-btn active" onclick="setUserType('customer')">👤 Customer</div>
+                    <div id="staffToggle" class="type-btn" onclick="setUserType('staff')">👔 Staff</div>
+                </div>
+                <form id="loginForm" onsubmit="handleLogin(event)">
+                    <div class="form-group"><label id="emailLabel">Email</label><input type="text" id="username" placeholder="Enter your email" required></div>
+                    <div class="form-group"><label>Password</label><input type="password" id="password" placeholder="Enter your password" required></div>
+                    <button type="submit" class="btn" style="width:100%" id="loginBtn">Sign In</button>
+                </form>
+                <p style="text-align:center; margin-top:20px;">Don't have an account? <a onclick="showPage('register')" style="color:#F5B042; cursor:pointer;">Register Now</a></p>
+            </div>
+        </div>
+        
+        <!-- PAGE 10: REGISTER -->
+        <div id="register" class="page">
+            <div class="form-container">
+                <h2 style="text-align: center;">Create Account</h2>
+                <form id="registerForm" onsubmit="handleRegister(event)">
+                    <div class="form-group"><label>User Type</label><div class="radio-group"><label><input type="radio" name="userType" value="customer" checked onchange="toggleStaffFields()"> Customer</label><label><input type="radio" name="userType" value="staff" onchange="toggleStaffFields()"> Staff</label></div></div>
+                    <div class="form-group"><label>Full Name</label><input type="text" id="fullname" required></div>
+                    <div class="form-group"><label>Email</label><input type="email" id="contact" required></div>
+                    <div id="staffFields" class="staff-fields">
+                        <div class="form-group"><label>Date of Birth</label><input type="date" id="staffDob"></div>
+                        <div class="form-group"><label>Address</label><input type="text" id="staffAddress"></div>
+                        <div class="form-group"><label>Phone</label><input type="tel" id="staffPhone"></div>
+                    </div>
+                    <div class="form-group"><label>Password</label><input type="password" id="regPassword" required></div>
+                    <div class="form-group"><label>Confirm Password</label><input type="password" id="confirmPassword" required></div>
+                    <button type="submit" class="btn" style="width:100%" id="registerBtn">Register</button>
+                </form>
+                <p style="text-align:center; margin-top:20px;">Already have an account? <a onclick="showPage('signin')" style="color:#F5B042; cursor:pointer;">Sign In</a></p>
+            </div>
+        </div>
+        
+        <!-- PAGE 11: MEMBERSHIP -->
+        <div id="membership" class="page">
+            <div class="form-container">
+                <div style="text-align:center"><div style="font-size:4rem;">👑</div><h2>Become a Member</h2><p style="color:#F5B042;">*Membership is only for registered customers</p></div>
+                <form id="memberForm" onsubmit="handleMember(event)">
+                    <div class="form-group"><label>Full Name</label><input type="text" id="memberName" required></div>
+                    <div class="form-group"><label>Email</label><input type="email" id="memberEmail" required></div>
+                    <div class="form-group"><label>Phone</label><input type="tel" id="memberPhone" required></div>
+                    <button type="submit" class="btn" style="width:100%" id="memberBtn">Send Verification</button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- PAGE 12: STAFF DASHBOARD -->
+        <div id="staff_dashboard" class="page">
+            <div style="background: linear-gradient(135deg, rgba(245,176,66,0.15), rgba(255,107,107,0.1)); border-radius: 24px; padding: 30px; margin-bottom: 30px;">
+                <h1>Staff Dashboard</h1>
+                <p>Welcome back, <span id="staffName">Administrator</span> 👑</p>
+            </div>
+            <div class="admin-stats">
+                <div class="stat-card" onclick="showPage('staff_products')"><div class="stat-number" id="staffTotalProducts">0</div><div class="stat-label">Products</div></div>
+                <div class="stat-card" onclick="showPage('staff_orders')"><div class="stat-number" id="staffTotalOrders">0</div><div class="stat-label">Orders</div></div>
+                <div class="stat-card" onclick="showPage('staff_customers')"><div class="stat-number" id="staffTotalCustomers">0</div><div class="stat-label">Customers</div></div>
+                <div class="stat-card" onclick="showPage('staff_feedback')"><div class="stat-number" id="staffTotalFeedback">0</div><div class="stat-label">Feedback</div></div>
+            </div>
+            <h2>Quick Actions</h2>
+            <div class="category-grid">
+                <div class="category-card" onclick="showPage('staff_products')"><div class="category-icon">📦</div><h3>Manage Products</h3></div>
+                <div class="category-card" onclick="showPage('staff_orders')"><div class="category-icon">📋</div><h3>Manage Orders</h3></div>
+                <div class="category-card" onclick="showPage('staff_customers')"><div class="category-icon">👥</div><h3>Manage Customers</h3></div>
+                <div class="category-card" onclick="showPage('staff_feedback')"><div class="category-icon">💬</div><h3>View Feedback</h3></div>
+                <div class="category-card" onclick="showPage('staff_reports')"><div class="category-icon">📊</div><h3>Reports</h3></div>
+            </div>
+            <h2>Recent Orders</h2>
+            <div class="table-container" id="staffRecentOrders"></div>
+        </div>
+        
+        <!-- PAGE 13: STAFF PRODUCTS -->
+        <div id="staff_products" class="page">
+            <h1>Manage Products</h1>
+            <div class="form-container" style="margin-bottom:40px;">
+                <h3>Add New Product</h3>
+                <form onsubmit="addProductToDB(event)">
+                    <div style="display:flex; gap:15px; flex-wrap:wrap;"><div class="form-group" style="flex:2;"><label>Product Name</label><input type="text" id="staffProductName" required></div><div class="form-group" style="flex:1;"><label>Price (RM)</label><input type="number" id="staffProductPrice" step="0.01" required></div></div>
+                    <div style="display:flex; gap:15px; flex-wrap:wrap;"><div class="form-group" style="flex:1;"><label>Category</label><select id="staffProductCategory"><option>Menswear</option><option>Womenswear</option><option>Kids</option><option>Shoe</option></select></div><div class="form-group" style="flex:1;"><label>Quantity</label><input type="number" id="staffProductQty" required></div></div>
+                    <button type="submit" class="btn" style="width:100%">➕ Add Product</button>
+                </form>
+            </div>
+            <h2>All Products</h2>
+            <div class="stock-list" id="staffProductsList"></div>
+        </div>
+        
+        <!-- PAGE 14: STAFF ORDERS -->
+        <div id="staff_orders" class="page"><h1>Manage Orders</h1><div class="table-container" id="staffOrdersTable"></div></div>
+        
+        <!-- PAGE 15: STAFF CUSTOMERS -->
+        <div id="staff_customers" class="page"><h1>Manage Customers</h1><div class="table-container" id="staffCustomersTable"></div></div>
+        
+        <!-- PAGE 16: STAFF FEEDBACK -->
+        <div id="staff_feedback" class="page"><h1>Customer Feedback</h1><div class="table-container" id="staffFeedbackTable"></div></div>
+        
+        <!-- PAGE 17: STAFF REPORTS -->
+        <div id="staff_reports" class="page"><h1>Sales Reports</h1><div class="admin-stats" id="reportStats"></div><div class="table-container" id="reportOrders"></div></div>
+        
+    </div>
+</main>
+
+<footer>
+    <p>© 2026 BSA Outlet. All Rights Reserved. | Premium Fashion Hub</p>
+</footer>
+
+<script>
+    // ==================== API CONFIG ====================
+    const API_URL = 'http://localhost/bsaoutlet/api/';
+    
+    // Page history stack for back button
+    let pageHistory = ['home'];
+    
+    // ==================== PRODUCT DATA (Static) ====================
+    const products = {
+        menswear: [{name:"Basic T-Shirt",price:35,emoji:"👕"},{name:"Oversized Hoodie",price:79,emoji:"👔"},{name:"Slim Jeans",price:89,emoji:"👖"},{name:"Denim Jacket",price:99,emoji:"🧥"}],
+        womenswear:[{name:"Floral Dress",price:69,emoji:"👗"},{name:"Long Blouse",price:55,emoji:"👚"},{name:"High Skirt",price:49,emoji:"👗"},{name:"Cardigan",price:59,emoji:"🧥"}],
+        kids:[{name:"Kids T-Shirt",price:25,emoji:"👕"},{name:"Cartoon Hoodie",price:45,emoji:"🧥"},{name:"Kids Jeans",price:39,emoji:"👖"},{name:"School Uniform",price:59,emoji:"🎒"}],
+        shoe:[{name:"Running Shoes",price:99,emoji:"👟"},{name:"Casual Sneakers",price:89,emoji:"👟"},{name:"Formal Shoes",price:120,emoji:"👞"},{name:"Sandals",price:35,emoji:"👡"}]
+    };
+    
+    let orders = [{id:"#BSA1001",customer:"Ali",items:"Shirt x1",total:130,status:"Paid"},{id:"#BSA1002",customer:"Siti",items:"Dress x2",total:160,status:"Pending"}];
+    let currentUserType = 'customer';
+    let currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+    
+    // ==================== DYNAMIC NAVBAR ====================
+    function updateNavbar() {
+        const navLinks = document.getElementById('navLinks');
+        if (!navLinks) return;
+        
+        if (currentUser && currentUser.type === 'staff') {
+            // Staff Navbar
+            navLinks.innerHTML = `
+                <a onclick="showPage('staff_dashboard')">Dashboard</a>
+                <a onclick="showPage('staff_products')">Products</a>
+                <a onclick="showPage('staff_orders')">Orders</a>
+                <a onclick="showPage('staff_customers')">Customers</a>
+                <a onclick="showPage('staff_reports')">Reports</a>
+                <a onclick="showPage('cart')" class="cart-link">🛒 Cart <span id="cartCount">0</span></a>
+                <a onclick="staffLogout()" class="logout-btn">🚪 Logout</a>
+            `;
+        } else {
+            // Customer Navbar
+            navLinks.innerHTML = `
+                <a onclick="showPage('home')">Home</a>
+                <a onclick="showPage('menswear')">Menswear</a>
+                <a onclick="showPage('womenswear')">Womenswear</a>
+                <a onclick="showPage('kids')">Kids</a>
+                <a onclick="showPage('shoe')">Shoe</a>
+                <a onclick="showPage('about')">About</a>
+                <a onclick="showPage('cart')" class="cart-link">🛒 Cart <span id="cartCount">0</span></a>
+                ${currentUser ? `<a onclick="logout()" class="logout-btn">👤 ${currentUser.name.split(' ')[0]} | Logout</a>` : `<a onclick="showPage('signin')">Sign In</a>`}
+            `;
+        }
+        updateCartCountDisplay();
+    }
+    
+    function updateCartCountDisplay() {
+        const cartCountSpan = document.getElementById('cartCount');
+        if (cartCountSpan) {
+            let cart = getCart();
+            cartCountSpan.innerHTML = cart.reduce((s,i) => s + i.qty, 0);
+        }
+    }
+    
+    // ==================== BACK BUTTON FUNCTION ====================
+    function updateBackButton() {
+        const backContainer = document.getElementById('backButtonContainer');
+        if (!backContainer) return;
+        
+        if (pageHistory.length > 1) {
+            backContainer.innerHTML = `<div class="back-btn" onclick="goBack()">← Back</div>`;
+        } else {
+            backContainer.innerHTML = '';
+        }
+    }
+    
+    function goBack() {
+        if (pageHistory.length > 1) {
+            pageHistory.pop(); // Remove current page
+            const previousPage = pageHistory[pageHistory.length - 1];
+            showPage(previousPage, true); // true = don't push to history again
+        }
+    }
+    
+    function goHome() {
+        showPage('home');
+    }
+    
+    // ==================== CART ====================
+    function getCart(){return JSON.parse(localStorage.getItem('cart')||'[]');}
+    function saveCart(c){localStorage.setItem('cart',JSON.stringify(c));updateCartCountDisplay();}
+    function addToCart(n,p){let c=getCart();let e=c.find(i=>i.name===n);e?e.qty++:c.push({name:n,price:p,qty:1});saveCart(c);showNotification(`✅ ${n} added!`,'success');}
+    function updateCartCount(){updateCartCountDisplay();}
+    function loadCartPage(){let c=getCart();let items=document.getElementById('cartItems');let sum=document.getElementById('cartSummary');if(c.length===0){items.innerHTML='<div class="empty-cart"><div style="font-size:4rem;">🛒</div><h3>Cart empty</h3><button class="btn" onclick="showPage(\'menswear\')">Shop Now</button></div>';sum.innerHTML='';return;}let h='',sub=0;c.forEach((i,idx)=>{let t=i.price*i.qty;sub+=t;h+=`<div class="cart-item"><div><h4>${i.name}</h4><p>RM${i.price}</p></div><div><button class="qty-btn" onclick="updateQty(${idx},-1)">-</button> ${i.qty} <button class="qty-btn" onclick="updateQty(${idx},1)">+</button> <button class="qty-btn" onclick="removeItem(${idx})">🗑️</button></div><div>RM${t}</div></div>`;});let tax=sub*0.1;let total=sub+tax;items.innerHTML=h;sum.innerHTML=`<h3>Summary</h3><div class="summary-row"><span>Subtotal</span><span>RM${sub}</span></div><div class="summary-row"><span>Tax10%</span><span>RM${tax}</span></div><div class="summary-row total"><span>Total</span><span>RM${total}</span></div><button class="btn" onclick="checkout()">Pay →</button><button class="btn-outline" onclick="clearCart()">Clear</button>`;}
+    function updateQty(i,c){let cart=getCart();let n=cart[i].qty+c;n<=0?cart.splice(i,1):cart[i].qty=n;saveCart(cart);loadCartPage();}
+    function removeItem(i){let c=getCart();c.splice(i,1);saveCart(c);loadCartPage();}
+    function clearCart(){if(confirm('Clear cart?')){localStorage.removeItem('cart');loadCartPage();updateCartCountDisplay();}}
+    function checkout(){let c=getCart();if(c.length){localStorage.setItem('checkoutCart',JSON.stringify(c));showPage('receipt');loadReceipt();}}
+    function loadReceipt(){let c=JSON.parse(localStorage.getItem('checkoutCart')||'[]');document.getElementById('orderId').innerHTML=`OrderID: #BSA${Date.now()}`;let h='',sub=0;c.forEach(i=>{let t=i.price*i.qty;sub+=t;h+=`<div class="summary-row"><span>${i.name} x${i.qty}</span><span>RM${t}</span></div>`;});let tax=sub*0.1,total=sub+tax;document.getElementById('receiptItems').innerHTML=h+`<div class="summary-row"><span>Subtotal</span><span>RM${sub}</span></div><div class="summary-row"><span>Tax</span><span>RM${tax}</span></div>`;document.getElementById('receiptTotal').innerHTML=`<div class="summary-row total"><span>Total</span><span>RM${total}</span></div><p style="color:#4CAF50;">✓ Paid</p>`;localStorage.removeItem('cart');localStorage.removeItem('checkoutCart');updateCartCountDisplay();}
+    
+    // ==================== LOAD PRODUCTS ====================
+    function loadProducts(){for(let cat of['menswear','womenswear','kids','shoe']){let cont=document.getElementById(`${cat}Products`);if(cont)cont.innerHTML=products[cat].map(p=>`<div class="product-card"><div class="product-image">${p.emoji}</div><div class="product-info"><h3>${p.name}</h3><div class="product-price">${p.price}</div><button class="btn" onclick="addToCart('${p.name}',${p.price})">Add to Cart</button></div></div>`).join('');}}
+    
+    // ==================== STOCK DB FUNCTIONS ====================
+    async function loadStockFromDB(){try{let r=await fetch(API_URL+'stock/get_stock.php');let d=await r.json();if(d.success&&d.stock){let byCat={};d.stock.forEach(i=>{let c=i.StockCategory||'Uncategorized';if(!byCat[c])byCat[c]=[];byCat[c].push(i);});let html='';for(let c in byCat){html+=`<div class="category-section"><h3>${c}</h3>`;byCat[c].forEach(i=>{html+=`<div class="stock-item"><span><b>${i.StockName||i.StockID}</b> - RM${i.StockPrice||0} | Qty:${i.StockQuantity||0}</span><button class="delete-btn" onclick="deleteStock('${i.StockID}')">Delete</button></div>`;});html+=`</div>`;}document.getElementById('stockList').innerHTML=html;}}catch(e){console.error(e);}}
+    async function addProductToDB(e){e.preventDefault();let n=document.getElementById('staffProductName')?document.getElementById('staffProductName').value:document.getElementById('productName')?.value;let p=document.getElementById('staffProductPrice')?document.getElementById('staffProductPrice').value:document.getElementById('productPrice')?.value;let c=document.getElementById('staffProductCategory')?document.getElementById('staffProductCategory').value:document.getElementById('productCategory')?.value;let q=document.getElementById('staffProductQty')?document.getElementById('staffProductQty').value:document.getElementById('productQty')?.value;if(!n||!p||!q){showNotification('Fill all fields','error');return;}try{let r=await fetch(API_URL+'stock/add_stock.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:n,price:p,category:c,quantity:q})});let d=await r.json();if(d.success){showNotification('✅ Product added','success');if(document.getElementById('staffProductName')){document.getElementById('staffProductName').value='';document.getElementById('staffProductPrice').value='';document.getElementById('staffProductQty').value='';loadStaffProducts();}else{document.getElementById('addProductForm')?.reset();loadStockFromDB();}}else{showNotification('❌ '+d.message,'error');}}catch(e){showNotification('Connection error','error');}}
+    async function deleteStock(id){if(!confirm('Delete product?'))return;try{let r=await fetch(API_URL+'stock/delete_stock.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({stockId:id})});let d=await r.json();if(d.success){showNotification('✅ Deleted','success');loadStockFromDB();loadStaffProducts();loadStaffDashboard();}else{showNotification('❌ Delete failed','error');}}catch(e){showNotification('Connection error','error');}}
+    
+    // ==================== STAFF FUNCTIONS ====================
+    async function loadStaffDashboard(){try{let p=await fetch(API_URL+'stock/get_stock.php');let pData=await p.json();document.getElementById('staffTotalProducts').innerHTML=pData.stock?pData.stock.length:0;let c=await fetch(API_URL+'customer/get_customer.php');let cData=await c.json();document.getElementById('staffTotalCustomers').innerHTML=cData.customers?cData.customers.length:0;let o=await fetch(API_URL+'order/get_orders.php');let oData=await o.json();let ordersList=oData.orders||[];document.getElementById('staffTotalOrders').innerHTML=ordersList.length;let f=await fetch(API_URL+'feedback/get_feedback.php');let fData=await f.json();document.getElementById('staffTotalFeedback').innerHTML=fData.feedback?fData.feedback.length:0;let recentHtml=`<table><thead><tr><th>Order ID</th><th>Customer</th><th>Amount</th><th>Status</th></tr></thead><tbody>`;ordersList.slice(0,5).forEach(o=>{recentHtml+=`<tr><td>${o.OrderID||'N/A'}</td><td>${o.CustomerName||'N/A'}</td><td>RM${o.OrderAmount||0}</td><td><span class="${o.OrderStatus==='Paid'?'status-paid':'status-pending'}">${o.OrderStatus||'Pending'}</span></td></tr>`;});recentHtml+=`</tbody></table>`;document.getElementById('staffRecentOrders').innerHTML=recentHtml||'<p>No orders</p>';}catch(e){console.error(e);}}
+    async function loadStaffProducts(){try{let r=await fetch(API_URL+'stock/get_stock.php');let d=await r.json();if(d.success&&d.stock&&d.stock.length){let html=`<table><thead><tr><th>ID</th><th>Name</th><th>Category</th><th>Price</th><th>Qty</th><th>Action</th></tr></thead><tbody>`;d.stock.forEach(i=>{html+=`<tr><td>${i.StockID}</td><td>${i.StockName||'-'}</td><td>${i.StockCategory||'-'}</td><td>RM${i.StockPrice||0}</td><td>${i.StockQuantity||0}</td><td><button class="delete-btn" onclick="deleteStock('${i.StockID}')">Delete</button></td></tr>`;});html+=`</tbody></table>`;document.getElementById('staffProductsList').innerHTML=html;}else{document.getElementById('staffProductsList').innerHTML='<p>No products</p>';}}catch(e){console.error(e);}}
+    async function loadStaffOrders(){try{let r=await fetch(API_URL+'order/get_orders.php');let d=await r.json();let list=d.orders||[];let html=`<table><thead><tr><th>Order ID</th><th>Date</th><th>Customer</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead><tbody>`;list.forEach(o=>{html+=`<tr><td>${o.OrderID||'N/A'}</td><td>${o.OrderDate||'N/A'}</td><td>${o.CustomerName||'N/A'}</td><td>RM${o.OrderAmount||0}</td><td><select id="status_${o.OrderID}"><option ${o.OrderStatus==='Pending'?'selected':''}>Pending</option><option ${o.OrderStatus==='Paid'?'selected':''}>Paid</option><option ${o.OrderStatus==='Shipped'?'selected':''}>Shipped</option></select></td><td><button class="btn-outline" style="padding:5px 10px;" onclick="updateOrderStatus('${o.OrderID}',document.getElementById('status_${o.OrderID}').value)">Update</button></td></tr>`;});html+=`</tbody></table>`;document.getElementById('staffOrdersTable').innerHTML=html||'<p>No orders</p>';}catch(e){console.error(e);}}
+    async function updateOrderStatus(id,status){try{let r=await fetch(API_URL+'order/update_order.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({orderId:id,status:status})});let d=await r.json();if(d.success){showNotification('✅ Status updated','success');loadStaffOrders();loadStaffDashboard();}else{showNotification('❌ Update failed','error');}}catch(e){showNotification('Error','error');}}
+    async function loadStaffCustomers(){try{let r=await fetch(API_URL+'customer/get_customer.php');let d=await r.json();let list=d.customers||[];let html=`<table><thead><tr><th>ID</th><th>Name</th><th>Address</th><th>Member</th></tr></thead><tbody>`;list.forEach(c=>{html+=`<tr><td>${c.CustomerID||'N/A'}</td><td>${c.CustomerName||'N/A'}</td><td>${c.CustomerAddress||'-'}</td><td>${c.IsMember==1?'✅ Yes':'❌ No'}</td></tr>`;});html+=`</tbody></table>`;document.getElementById('staffCustomersTable').innerHTML=html||'<p>No customers</p>';}catch(e){console.error(e);}}
+    async function loadStaffFeedback(){try{let r=await fetch(API_URL+'feedback/get_feedback.php');let d=await r.json();let list=d.feedback||[];let html=`<table><thead><tr><th>ID</th><th>Date</th><th>Order ID</th><th>Customer ID</th></tr></thead><tbody>`;list.forEach(f=>{html+=`<tr><td>${f.FeedbackID||'N/A'}</td><td>${f.FeedbackDate||'N/A'}</td><td>${f.OrderID||'N/A'}</td><td>${f.CustomerID||'N/A'}</td></tr>`;});html+=`</tbody></table>`;document.getElementById('staffFeedbackTable').innerHTML=html||'<p>No feedback</p>';}catch(e){console.error(e);}}
+    async function loadStaffReports(){try{let r=await fetch(API_URL+'order/get_orders.php');let d=await r.json();let list=d.orders||[];let total=list.reduce((s,o)=>s+(parseFloat(o.OrderAmount)||0),0);let paid=list.filter(o=>o.OrderStatus==='Paid').length;let pending=list.filter(o=>o.OrderStatus==='Pending').length;document.getElementById('reportStats').innerHTML=`<div class="stat-card"><div class="stat-number">RM${total}</div><div class="stat-label">Revenue</div></div><div class="stat-card"><div class="stat-number">${paid}</div><div class="stat-label">Paid</div></div><div class="stat-card"><div class="stat-number">${pending}</div><div class="stat-label">Pending</div></div><div class="stat-card"><div class="stat-number">${list.length}</div><div class="stat-label">Total</div></div>`;let html=`<table><thead><tr><th>Order ID</th><th>Date</th><th>Customer</th><th>Amount</th><th>Status</th></tr></thead><tbody>`;list.forEach(o=>{html+=`<tr><td>${o.OrderID||'N/A'}</td><td>${o.OrderDate||'N/A'}</td><td>${o.CustomerName||'N/A'}</td><td>RM${o.OrderAmount||0}</td><td><span class="${o.OrderStatus==='Paid'?'status-paid':'status-pending'}">${o.OrderStatus||'Pending'}</span></td></tr>`;});html+=`</tbody></table>`;document.getElementById('reportOrders').innerHTML=html;}catch(e){console.error(e);}}
+    
+    // ==================== AUTH ====================
+    function toggleStaffFields(){let isStaff=document.querySelector('input[name="userType"]:checked').value==='staff';document.getElementById('staffFields').classList.toggle('show',isStaff);}
+    function setUserType(t){currentUserType=t;document.getElementById('customerToggle').classList.toggle('active',t==='customer');document.getElementById('staffToggle').classList.toggle('active',t==='staff');document.getElementById('emailLabel').innerHTML=t==='customer'?'Email':'Staff Email';}
+    function showNotification(m,t){let n=document.createElement('div');n.className=`notification ${t}`;n.innerHTML=m;document.body.appendChild(n);setTimeout(()=>n.remove(),3000);}
+    async function registerToPHP(data){let btn=document.getElementById('registerBtn');btn.disabled=true;btn.innerHTML='<span class="loading-spinner"></span> Registering...';try{let r=await fetch(API_URL+'register.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});let res=await r.json();if(res.success){showNotification(`✅ ${res.message}`,'success');setTimeout(()=>showPage('signin'),1500);return true;}else{showNotification(`❌ ${res.message}`,'error');return false;}}catch(e){showNotification('❌ Connection error!','error');return false;}finally{btn.disabled=false;btn.innerHTML='Register';}}
+    async function loginToPHP(data){let btn=document.getElementById('loginBtn');btn.disabled=true;btn.innerHTML='<span class="loading-spinner"></span> Signing...';try{let r=await fetch(API_URL+'login.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});let res=await r.json();if(res.success){currentUser={id:res.user.id,name:res.user.name,email:res.user.email,type:res.userType};localStorage.setItem('currentUser',JSON.stringify(currentUser));updateNavbar();showNotification(`✅ Welcome ${res.user.name}!`,'success');return true;}else{showNotification(`❌ ${res.message}`,'error');return false;}}catch(e){showNotification('❌ Connection error!','error');return false;}finally{btn.disabled=false;btn.innerHTML='Sign In';}}
+    async function handleLogin(e){e.preventDefault();let email=document.getElementById('username').value;let pwd=document.getElementById('password').value;if(!email||!pwd){showNotification('Enter email & password','error');return;}let success=await loginToPHP({userType:currentUserType,email:email,password:pwd});if(success){if(currentUser&&currentUser.type==='staff')showPage('staff_dashboard');else showPage('home');}document.getElementById('loginForm').reset();}
+    async function handleRegister(e){e.preventDefault();let type=document.querySelector('input[name="userType"]:checked').value;let name=document.getElementById('fullname').value;let email=document.getElementById('contact').value;let pwd=document.getElementById('regPassword').value;let cpwd=document.getElementById('confirmPassword').value;if(!name||!email||!pwd){showNotification('Fill all fields','error');return;}if(pwd!==cpwd){showNotification('Passwords do not match','error');return;}if(pwd.length<6){showNotification('Password min 6 chars','error');return;}let data={userType:type,name:name,email:email,password:pwd};if(type==='staff'){data.dob=document.getElementById('staffDob').value;data.address=document.getElementById('staffAddress').value;data.phone=document.getElementById('staffPhone').value;}await registerToPHP(data);document.getElementById('registerForm').reset();toggleStaffFields();}
+    async function handleMember(e){e.preventDefault();let name=document.getElementById('memberName').value;let email=document.getElementById('memberEmail').value;if(!name||!email){showNotification('Fill name and email','error');return;}try{let r=await fetch(API_URL+'get_user.php?email='+encodeURIComponent(email)+'&userType=customer');let res=await r.json();if(res.success){let reg=await fetch(API_URL+'membership.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({customerId:res.user.id,email:email,level:'Basic'})});let regRes=await reg.json();if(regRes.success){showNotification('✅ You are now a member!','success');showPage('signin');}else{showNotification('❌ '+regRes.message,'error');}}else{showNotification('❌ No account found. Register first!','error');showPage('register');}}catch(e){showNotification('Connection error','error');}document.getElementById('memberForm').reset();}
+    function logout(){localStorage.removeItem('currentUser');currentUser=null;updateNavbar();showNotification('✅ Logged out','success');showPage('home');}
+    function staffLogout(){localStorage.removeItem('currentUser');currentUser=null;updateNavbar();showNotification('✅ Logged out','success');showPage('home');}
+    
+    // ==================== PAGE NAVIGATION WITH HISTORY ====================
+    function showPage(id, fromBack = false) {
+        // Hide all pages
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        
+        // Update history (unless from back button)
+        if (!fromBack) {
+            pageHistory.push(id);
+        }
+        updateBackButton();
+        
+        // Load data based on page
+        if (id === 'cart') loadCartPage();
+        if (id === 'receipt') loadReceipt();
+        if (id === 'stock') loadStockFromDB();
+        if (id === 'staff_dashboard') loadStaffDashboard();
+        if (id === 'staff_products') loadStaffProducts();
+        if (id === 'staff_orders') loadStaffOrders();
+        if (id === 'staff_customers') loadStaffCustomers();
+        if (id === 'staff_feedback') loadStaffFeedback();
+        if (id === 'staff_reports') loadStaffReports();
+        
+        window.scrollTo(0, 0);
+    }
+    
+    // ==================== INIT ====================
+    loadProducts();
+    updateNavbar();
+    setUserType('customer');
+    toggleStaffFields();
+    updateBackButton();
+    console.log('🚀 BSA Outlet ready!');
+</script>
+
+</body>
+</html>
