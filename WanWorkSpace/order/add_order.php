@@ -3,59 +3,47 @@ header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 
-$servername = "localhost";
-$serverid = "root";
-$serverpassword = "";
-$database = "bsaoutletdb";
+$conn = mysqli_connect("localhost", "root", "", "bsaoutletdb");
 
-$dbconnect = mysqli_connect($servername, $serverid, $serverpassword, $database);
-
-if (!$dbconnect) {
+if (!$conn) {
     echo json_encode(['success' => false, 'message' => 'Connection failed']);
     exit;
 }
 
-function generateNextId($dbconnect) {
-    $sql = "SELECT MAX(OrderID) as max_id FROM orders";
-    $result = mysqli_query($dbconnect, $sql);
+function generateId($conn) {
+    $result = mysqli_query($conn, "SELECT MAX(OrderID) as max FROM orders");
     $row = mysqli_fetch_assoc($result);
-    $maxId = $row['max_id'];
-    
-    if ($maxId) {
-        $num = intval(substr($maxId, 1)) + 1;
+    $max = $row['max'];
+    if ($max) {
+        $num = intval(substr($max, 1)) + 1;
         return 'O' . str_pad($num, 3, '0', STR_PAD_LEFT);
-    } else {
-        return 'O001';
     }
+    return 'O001';
 }
 
 $input = json_decode(file_get_contents('php://input'), true);
 
-$orderDate = mysqli_real_escape_string($dbconnect, $input['orderDate'] ?? date('Y-m-d'));
-$orderAmount = mysqli_real_escape_string($dbconnect, $input['orderAmount'] ?? 0);
-$customerId = mysqli_real_escape_string($dbconnect, $input['customerId'] ?? '');
-$customerName = mysqli_real_escape_string($dbconnect, $input['customerName'] ?? '');
-$employeeId = mysqli_real_escape_string($dbconnect, $input['employeeId'] ?? '');
-$employeeName = mysqli_real_escape_string($dbconnect, $input['employeeName'] ?? '');
-$employeeAddress = mysqli_real_escape_string($dbconnect, $input['employeeAddress'] ?? '');
-$stockId = mysqli_real_escape_string($dbconnect, $input['stockId'] ?? '');
+$customerId = $input['customerId'] ?? '';
+$customerName = $input['customerName'] ?? '';
+$orderAmount = $input['orderAmount'] ?? 0;
+$items = $input['items'] ?? '';
 
 if (empty($customerId) || empty($orderAmount)) {
-    echo json_encode(['success' => false, 'message' => 'Customer ID and Order Amount required']);
+    echo json_encode(['success' => false, 'message' => 'Customer and amount required']);
     exit;
 }
 
-$nextId = generateNextId($dbconnect);
-$sql = "INSERT INTO orders (OrderID, OrderDate, OrderAmount, CustomerID, CustomerName, EmployeeID, EmployeeName, EmployeeAddress, StockID) 
-        VALUES ('$nextId', '$orderDate', '$orderAmount', '$customerId', '$customerName', '$employeeId', '$employeeName', '$employeeAddress', '$stockId')";
+$id = generateId($conn);
+$date = date('Y-m-d');
 
-$result = mysqli_query($dbconnect, $sql);
+$sql = "INSERT INTO orders (OrderID, OrderDate, OrderAmount, CustomerID, CustomerName, OrderStatus) 
+        VALUES ('$id', '$date', '$orderAmount', '$customerId', '$customerName', 'Pending')";
 
-if ($result) {
-    echo json_encode(['success' => true, 'message' => 'Order added', 'orderId' => $nextId]);
+if (mysqli_query($conn, $sql)) {
+    echo json_encode(['success' => true, 'message' => 'Order placed', 'orderId' => $id]);
 } else {
-    echo json_encode(['success' => false, 'message' => 'Failed to add order: ' . mysqli_error($dbconnect)]);
+    echo json_encode(['success' => false, 'message' => 'Failed: ' . mysqli_error($conn)]);
 }
 
-mysqli_close($dbconnect);
+mysqli_close($conn);
 ?>

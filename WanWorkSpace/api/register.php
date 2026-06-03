@@ -4,15 +4,10 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
-$servername = "localhost";
-$serverid = "root";
-$serverpassword = "";
-$database = "bsaoutletdb";
+$conn = mysqli_connect("localhost", "root", "", "bsaoutletdb");
 
-$dbconnect = mysqli_connect($servername, $serverid, $serverpassword, $database);
-
-if (!$dbconnect) {
-    echo json_encode(['success' => false, 'message' => 'Database Connection Error']);
+if (!$conn) {
+    echo json_encode(['success' => false, 'message' => 'Database connection failed']);
     exit;
 }
 
@@ -23,109 +18,78 @@ if (!$input) {
     exit;
 }
 
-$userType = mysqli_real_escape_string($dbconnect, $input['userType'] ?? '');
-$name = mysqli_real_escape_string($dbconnect, trim($input['name'] ?? ''));
-$email = mysqli_real_escape_string($dbconnect, trim($input['email'] ?? ''));
-$password = mysqli_real_escape_string($dbconnect, $input['password'] ?? '');
-$address = mysqli_real_escape_string($dbconnect, $input['address'] ?? '');
-$phone = mysqli_real_escape_string($dbconnect, $input['phone'] ?? '');
-$dob = mysqli_real_escape_string($dbconnect, $input['dob'] ?? '');
-$hiredDate = mysqli_real_escape_string($dbconnect, $input['hiredDate'] ?? date('Y-m-d'));
+$userType = $input['userType'] ?? '';
+$name = trim($input['name'] ?? '');
+$email = trim($input['email'] ?? '');
+$password = $input['password'] ?? '';
+$address = $input['address'] ?? '';
+$phone = $input['phone'] ?? '';
 
 if (empty($name) || empty($email) || empty($password)) {
-    echo json_encode(['success' => false, 'message' => 'All fields are required']);
+    echo json_encode(['success' => false, 'message' => 'All fields required']);
     exit;
 }
 
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    echo json_encode(['success' => false, 'message' => 'Invalid email format']);
+    echo json_encode(['success' => false, 'message' => 'Invalid email']);
     exit;
 }
 
 if (strlen($password) < 6) {
-    echo json_encode(['success' => false, 'message' => 'Password must be at least 6 characters']);
+    echo json_encode(['success' => false, 'message' => 'Password min 6 characters']);
     exit;
 }
 
 $hashedPassword = md5($password);
 
-function generateNextId($dbconnect, $table, $prefix, $idColumn) {
-    $sql = "SELECT MAX($idColumn) as max_id FROM $table";
-    $result = mysqli_query($dbconnect, $sql);
+function generateId($conn, $table, $prefix, $idCol) {
+    $result = mysqli_query($conn, "SELECT MAX($idCol) as max FROM $table");
     $row = mysqli_fetch_assoc($result);
-    $maxId = $row['max_id'];
-    
-    if ($maxId) {
-        $num = intval(substr($maxId, strlen($prefix))) + 1;
+    $max = $row['max'];
+    if ($max) {
+        $num = intval(substr($max, strlen($prefix))) + 1;
         return $prefix . str_pad($num, 3, '0', STR_PAD_LEFT);
-    } else {
-        return $prefix . '001';
     }
+    return $prefix . '001';
 }
 
 if ($userType === 'customer') {
-    $checkSql = "SELECT CustomerID FROM customer WHERE CustomerEmail = '$email'";
-    $checkResult = mysqli_query($dbconnect, $checkSql);
-    
-    if (mysqli_num_rows($checkResult) > 0) {
+    $check = mysqli_query($conn, "SELECT CustomerID FROM customer WHERE CustomerEmail = '$email'");
+    if (mysqli_num_rows($check) > 0) {
         echo json_encode(['success' => false, 'message' => 'Email already registered']);
-        mysqli_close($dbconnect);
         exit;
     }
     
-    $nextId = generateNextId($dbconnect, 'customer', 'C', 'CustomerID');
+    $id = generateId($conn, 'customer', 'C', 'CustomerID');
+    $sql = "INSERT INTO customer (CustomerID, CustomerName, CustomerEmail, CustomerPassword, CustomerPhone, IsMember) 
+            VALUES ('$id', '$name', '$email', '$hashedPassword', '$phone', 0)";
     
-    $sql = "INSERT INTO customer (CustomerID, CustomerName, CustomerAddress, CustomerEmail, CustomerPassword, CustomerPhone, IsMember, Points, JoinDate) 
-            VALUES ('$nextId', '$name', '$address', '$email', '$hashedPassword', '$phone', 0, 0, NOW())";
-    
-    $result = mysqli_query($dbconnect, $sql);
-    
-    if ($result) {
-        echo json_encode([
-            'success' => true,
-            'message' => 'Customer registered successfully!',
-            'userType' => 'customer',
-            'userId' => $nextId,
-            'name' => $name,
-            'email' => $email
-        ]);
+    if (mysqli_query($conn, $sql)) {
+        echo json_encode(['success' => true, 'message' => 'Customer registered!', 'userId' => $id, 'name' => $name]);
     } else {
-        echo json_encode(['success' => false, 'message' => 'Failed to register: ' . mysqli_error($dbconnect)]);
+        echo json_encode(['success' => false, 'message' => 'Registration failed: ' . mysqli_error($conn)]);
     }
     
 } else if ($userType === 'staff') {
-    $checkSql = "SELECT EmployeeID FROM employee WHERE EmployeeEmail = '$email'";
-    $checkResult = mysqli_query($dbconnect, $checkSql);
-    
-    if (mysqli_num_rows($checkResult) > 0) {
-        echo json_encode(['success' => false, 'message' => 'Email already registered as staff']);
-        mysqli_close($dbconnect);
+    $check = mysqli_query($conn, "SELECT EmployeeID FROM employee WHERE EmployeeEmail = '$email'");
+    if (mysqli_num_rows($check) > 0) {
+        echo json_encode(['success' => false, 'message' => 'Email already registered']);
         exit;
     }
     
-    $nextId = generateNextId($dbconnect, 'employee', 'E', 'EmployeeID');
+    $id = generateId($conn, 'employee', 'E', 'EmployeeID');
+    $sql = "INSERT INTO employee (EmployeeID, EmployeeName, EmployeeEmail, EmployeePassword, EmployeePhone) 
+            VALUES ('$id', '$name', '$email', '$hashedPassword', '$phone')";
     
-    $sql = "INSERT INTO employee (EmployeeID, EmployeeName, EmployeeEmail, EmployeePassword, empDOB, empAddress, EmployeePhone, empHiredDate) 
-            VALUES ('$nextId', '$name', '$email', '$hashedPassword', '$dob', '$address', '$phone', '$hiredDate')";
-    
-    $result = mysqli_query($dbconnect, $sql);
-    
-    if ($result) {
-        echo json_encode([
-            'success' => true,
-            'message' => 'Staff registered successfully!',
-            'userType' => 'staff',
-            'userId' => $nextId,
-            'name' => $name,
-            'email' => $email
-        ]);
+    if (mysqli_query($conn, $sql)) {
+        echo json_encode(['success' => true, 'message' => 'Staff registered!', 'userId' => $id, 'name' => $name]);
     } else {
-        echo json_encode(['success' => false, 'message' => 'Failed to register: ' . mysqli_error($dbconnect)]);
+        echo json_encode(['success' => false, 'message' => 'Registration failed: ' . mysqli_error($conn)]);
     }
     
 } else {
     echo json_encode(['success' => false, 'message' => 'Invalid user type']);
 }
 
-mysqli_close($dbconnect);
+mysqli_close($conn);
 ?>
