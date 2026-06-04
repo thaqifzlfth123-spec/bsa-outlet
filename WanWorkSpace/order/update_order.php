@@ -5,20 +5,20 @@ header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
 $servername = "localhost";
-$serverid = "root";
-$serverpassword = "";
-$database = "bsaoutletdb";
+$username = "root";
+$password = "";
+$dbname = "bsaoutletdb";
 
-$dbconnect = mysqli_connect($servername, $serverid, $serverpassword, $database);
+$conn = mysqli_connect($servername, $username, $password, $dbname);
 
-if (!$dbconnect) {
-    echo json_encode(['success' => false, 'message' => 'Connection failed']);
+if (!$conn) {
+    echo json_encode(['success' => false, 'message' => 'Connection failed: ' . mysqli_connect_error()]);
     exit;
 }
 
 $input = json_decode(file_get_contents('php://input'), true);
-$orderId = mysqli_real_escape_string($dbconnect, $input['orderId'] ?? '');
-$status = mysqli_real_escape_string($dbconnect, $input['status'] ?? '');
+$orderId = mysqli_real_escape_string($conn, $input['orderId'] ?? '');
+$status = mysqli_real_escape_string($conn, $input['status'] ?? '');
 
 if (empty($orderId) || empty($status)) {
     echo json_encode(['success' => false, 'message' => 'Order ID and status required']);
@@ -26,13 +26,12 @@ if (empty($orderId) || empty($status)) {
 }
 
 $sql = "UPDATE orders SET OrderStatus = '$status' WHERE OrderID = '$orderId'";
-$result = mysqli_query($dbconnect, $sql);
 
-if ($result) {
+if (mysqli_query($conn, $sql)) {
     echo json_encode(['success' => true, 'message' => 'Order updated successfully']);
 } else {
-    echo json_encode(['success' => false, 'message' => 'Failed to update order']);
+    echo json_encode(['success' => false, 'message' => 'Failed to update order: ' . mysqli_error($conn)]);
 }
 
-mysqli_close($dbconnect);
+mysqli_close($conn);
 ?>

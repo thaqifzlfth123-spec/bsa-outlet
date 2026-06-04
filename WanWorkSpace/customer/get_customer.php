@@ -3,19 +3,19 @@ header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 
 $servername = "localhost";
-$serverid = "root";
-$serverpassword = "";
-$database = "bsaoutletdb";
+$username = "root";
+$password = "";
+$dbname = "bsaoutletdb";
 
-$dbconnect = mysqli_connect($servername, $serverid, $serverpassword, $database);
+$conn = mysqli_connect($servername, $username, $password, $dbname);
 
-if (!$dbconnect) {
-    echo json_encode(['success' => false, 'message' => 'Connection failed']);
+if (!$conn) {
+    echo json_encode(['success' => false, 'message' => 'Connection failed: ' . mysqli_connect_error()]);
     exit;
 }
 
-$sql = "SELECT CustomerID, CustomerName, CustomerAddress, CustomerEmail, CustomerPhone FROM customer";
-$result = mysqli_query($dbconnect, $sql);
+$sql = "SELECT CustomerID, CustomerName, CustomerEmail, CustomerPhone, CustomerAddress FROM customer";
+$result = mysqli_query($conn, $sql);
 
 $customers = [];
 while ($row = mysqli_fetch_assoc($result)) {
@@ -23,5 +23,5 @@ while ($row = mysqli_fetch_assoc($result)) {
 }
 
 echo json_encode(['success' => true, 'customers' => $customers]);
-mysqli_close($dbconnect);
+mysqli_close($conn);
 ?>

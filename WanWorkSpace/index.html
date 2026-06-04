@@ -6,13 +6,13 @@
     <title>BSA Outlet | Premium Fashion Hub</title>
     <style>
         /* ========================================
-           ULTRA PREMIUM CSS - COMPLETE FIXED VERSION
+           ULTRA PREMIUM CSS - FULLY FIXED
         ======================================== */
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
-            font-family: 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
             background: radial-gradient(circle at 20% 30%, #0a0a0a, #000000);
             color: #fff;
             line-height: 1.6;
@@ -183,7 +183,7 @@
             </div>
         </div>
         
-        <!-- PRODUCT PAGES - Data akan di-load dari database -->
+        <!-- PRODUCT PAGES -->
         <div id="menswear" class="page"><h1>Menswear Collection</h1><div class="products-grid" id="menswearProducts"></div></div>
         <div id="womenswear" class="page"><h1>Womenswear Collection</h1><div class="products-grid" id="womenswearProducts"></div></div>
         <div id="kids" class="page"><h1>Kids Wear</h1><div class="products-grid" id="kidsProducts"></div></div>
@@ -309,13 +309,20 @@
 <footer><p>© 2026 BSA Outlet. All Rights Reserved. | Premium Fashion Hub</p></footer>
 
 <script>
-    // ==================== CONFIGURATION ====================
-    const API_URL = 'http://localhost/bsaoutlet/api/';
+    // ==================== API CONFIGURATION ====================
+    // CHANGE THIS TO MATCH YOUR FOLDER NAME!
+    // If your folder is "WanWorkSpace", use: http://localhost/WanWorkSpace/api/
+    // If your folder is "bsaoutlet", use: http://localhost/bsaoutlet/api/
+    const API_URL = 'http://localhost/WanWorkSpace/api/';
+    
+    // Show API URL in console for debugging
+    console.log('🔗 API URL:', API_URL);
+    
     let pageHistory = ['home'];
     let currentUserType = 'customer';
     let currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
     
-    // ==================== BACK BUTTON (REVERSE HISTORY) ====================
+    // ==================== BACK BUTTON ====================
     function updateBackButton() {
         const container = document.getElementById('backButtonContainer');
         if (!container) return;
@@ -328,9 +335,9 @@
     
     function goBack() {
         if (pageHistory.length > 1) {
-            pageHistory.pop(); // Remove current page
+            pageHistory.pop();
             const previousPage = pageHistory[pageHistory.length - 1];
-            showPage(previousPage, true); // true = from back button, don't push to history
+            showPage(previousPage, true);
         }
     }
     
@@ -406,9 +413,13 @@
     
     // ==================== LOAD PRODUCTS FROM DATABASE ====================
     async function loadProductsFromDB() {
+        console.log('🔄 Loading products from:', API_URL + 'stock/get_stock.php');
+        
         try {
             const response = await fetch(API_URL + 'stock/get_stock.php');
             const data = await response.json();
+            
+            console.log('📦 API Response:', data);
             
             if (data.success && data.stock) {
                 // Group by category
@@ -416,6 +427,11 @@
                 const womenswear = data.stock.filter(p => p.StockCategory === 'Womenswear');
                 const kids = data.stock.filter(p => p.StockCategory === 'Kids');
                 const shoe = data.stock.filter(p => p.StockCategory === 'Shoe');
+                
+                console.log('👔 Menswear:', menswear.length, 'items');
+                console.log('👗 Womenswear:', womenswear.length, 'items');
+                console.log('🧸 Kids:', kids.length, 'items');
+                console.log('👟 Shoe:', shoe.length, 'items');
                 
                 // Display in each category page
                 displayProductGrid('menswearProducts', menswear);
@@ -425,10 +441,13 @@
                 
                 // Update home product count
                 document.getElementById('homeProductCount').innerHTML = data.stock.length;
+            } else {
+                console.error('API returned error:', data);
+                showNotification('Error loading products: ' + (data.message || 'Unknown error'), 'error');
             }
         } catch (error) {
-            console.error('Error loading products:', error);
-            showNotification('Error loading products from database', 'error');
+            console.error('❌ Error loading products:', error);
+            showNotification('Error loading products from database. Make sure XAMPP is running!', 'error');
         }
     }
     
@@ -437,7 +456,7 @@
         if (!container) return;
         
         if (products.length === 0) {
-            container.innerHTML = '<p style="text-align:center;">No products available in this category yet.</p>';
+            container.innerHTML = '<p style="text-align:center; padding:40px;">No products available in this category yet.</p>';
             return;
         }
         
@@ -445,9 +464,9 @@
             <div class="product-card">
                 <div class="product-image">${getProductEmoji(p.StockCategory)}</div>
                 <div class="product-info">
-                    <h3 class="product-title">${p.StockName || p.StockID}</h3>
-                    <div class="product-price">${p.StockPrice || 0}</div>
-                    <button class="btn" onclick="addToCart('${p.StockName}', ${p.StockPrice || 0})">Add to Cart</button>
+                    <h3 class="product-title">${escapeHtml(p.StockName || p.StockID)}</h3>
+                    <div class="product-price">${parseFloat(p.StockPrice || 0).toFixed(2)}</div>
+                    <button class="btn" onclick="addToCart('${escapeHtml(p.StockName)}', ${parseFloat(p.StockPrice || 0)})">Add to Cart</button>
                 </div>
             </div>
         `).join('');
@@ -463,6 +482,16 @@
         }
     }
     
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+    
     // ==================== STAFF PRODUCT FUNCTIONS ====================
     async function loadStaffProducts() {
         try {
@@ -474,9 +503,9 @@
                 data.stock.forEach(item => {
                     html += `<tr>
                         <td>${item.StockID}</td>
-                        <td>${item.StockName || '-'}</td>
+                        <td>${escapeHtml(item.StockName || '-')}</td>
                         <td>${item.StockCategory || '-'}</td>
-                        <td>RM ${item.StockPrice || 0}</td>
+                        <td>RM ${parseFloat(item.StockPrice || 0).toFixed(2)}</td>
                         <td>${item.StockQuantity || 0}</td>
                         <td><button class="delete-btn" onclick="deleteStock('${item.StockID}')">Delete</button></td>
                     </tr>`;
@@ -525,7 +554,7 @@
                 document.getElementById('staffProductPrice').value = '';
                 document.getElementById('staffProductQty').value = '';
                 loadStaffProducts();
-                loadProductsFromDB(); // Refresh customer product display
+                loadProductsFromDB();
                 loadStaffDashboard();
             } else {
                 showNotification('❌ Failed to add product: ' + result.message, 'error');
@@ -553,7 +582,7 @@
             if (result.success) {
                 showNotification('✅ Product deleted successfully!', 'success');
                 loadStaffProducts();
-                loadProductsFromDB(); // Refresh customer product display
+                loadProductsFromDB();
                 loadStaffDashboard();
             } else {
                 showNotification('❌ Failed to delete product', 'error');
@@ -567,35 +596,34 @@
     // ==================== STAFF OTHER FUNCTIONS ====================
     async function loadStaffDashboard() {
         try {
-            // Load products count
             const productRes = await fetch(API_URL + 'stock/get_stock.php');
             const productData = await productRes.json();
             document.getElementById('staffTotalProducts').innerHTML = productData.stock ? productData.stock.length : 0;
             
-            // Load customers count
             const customerRes = await fetch(API_URL + 'customer/get_customer.php');
             const customerData = await customerRes.json();
             document.getElementById('staffTotalCustomers').innerHTML = customerData.customers ? customerData.customers.length : 0;
             
-            // Load orders
             const orderRes = await fetch(API_URL + 'order/get_orders.php');
             const orderData = await orderRes.json();
             const ordersList = orderData.orders || [];
             document.getElementById('staffTotalOrders').innerHTML = ordersList.length;
             
-            // Load feedback
             const feedbackRes = await fetch(API_URL + 'feedback/get_feedback.php');
             const feedbackData = await feedbackRes.json();
             document.getElementById('staffTotalFeedback').innerHTML = feedbackData.feedback ? feedbackData.feedback.length : 0;
             
-            // Recent orders table
             let recentHtml = `<table><thead><tr><th>Order ID</th><th>Customer</th><th>Amount</th><th>Status</th></tr></thead><tbody>`;
             ordersList.slice(0, 5).forEach(order => {
-                recentHtml += `<tr><td>${order.OrderID || 'N/A'}</td><td>${order.CustomerName || 'N/A'}</td><td>RM ${order.OrderAmount || 0}</td><td><span class="${order.OrderStatus === 'Paid' ? 'status-paid' : 'status-pending'}">${order.OrderStatus || 'Pending'}</span></td></tr>`;
+                recentHtml += `<tr>
+                    <td>${order.OrderID || 'N/A'}</td>
+                    <td>${order.CustomerName || 'N/A'}</td>
+                    <td>RM ${order.OrderAmount || 0}</td>
+                    <td><span class="${order.OrderStatus === 'Paid' ? 'status-paid' : 'status-pending'}">${order.OrderStatus || 'Pending'}</span></td>
+                </tr>`;
             });
-            recentHtml += `</tbody></table>`;
+            recentHtml += `</tbody> licensierad`;
             document.getElementById('staffRecentOrders').innerHTML = recentHtml || '<p>No orders</p>';
-            
         } catch (error) {
             console.error('Error loading dashboard:', error);
         }
@@ -663,11 +691,11 @@
             let html = `<table><thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Address</th></tr></thead><tbody>`;
             customers.forEach(c => {
                 html += `<tr>
-                    <td>${c.CustomerID || 'N/A'}</td>
-                    <td>${c.CustomerName || 'N/A'}</td>
-                    <td>${c.CustomerEmail || '-'}</td>
-                    <td>${c.CustomerPhone || '-'}</td>
-                    <td>${c.CustomerAddress || '-'}</td>
+                    <td>${c.CustomerID || 'N/A'} </td>
+                    <td>${c.CustomerName || 'N/A'} </td>
+                    <td>${c.CustomerEmail || '-'} </td>
+                    <td>${c.CustomerPhone || '-'} </td>
+                    <td>${c.CustomerAddress || '-'} </td>
                 </tr>`;
             });
             html += `</tbody></table>`;
@@ -687,10 +715,10 @@
             let html = `<table><thead><tr><th>ID</th><th>Date</th><th>Order ID</th><th>Customer</th></tr></thead><tbody>`;
             feedbackList.forEach(f => {
                 html += `<tr>
-                    <td>${f.FeedbackID || 'N/A'}</td>
-                    <td>${f.FeedbackDate || 'N/A'}</td>
-                    <td>${f.OrderID || 'N/A'}</td>
-                    <td>${f.CustomerName || f.CustomerID || 'N/A'}</td>
+                    <td>${f.FeedbackID || 'N/A'} </td>
+                    <td>${f.FeedbackDate || 'N/A'} </td>
+                    <td>${f.OrderID || 'N/A'} </td>
+                    <td>${f.CustomerName || f.CustomerID || 'N/A'} </td>
                 </tr>`;
             });
             html += `</tbody></table>`;
@@ -712,7 +740,7 @@
             let pendingOrders = ordersList.filter(o => o.OrderStatus === 'Pending').length;
             
             document.getElementById('reportStats').innerHTML = `
-                <div class="stat-card"><div class="stat-number">RM ${totalRevenue}</div><div class="stat-label">Revenue</div></div>
+                <div class="stat-card"><div class="stat-number">RM ${totalRevenue.toFixed(2)}</div><div class="stat-label">Revenue</div></div>
                 <div class="stat-card"><div class="stat-number">${paidOrders}</div><div class="stat-label">Paid</div></div>
                 <div class="stat-card"><div class="stat-number">${pendingOrders}</div><div class="stat-label">Pending</div></div>
                 <div class="stat-card"><div class="stat-number">${ordersList.length}</div><div class="stat-label">Total Orders</div></div>
@@ -721,11 +749,11 @@
             let html = `<table><thead><tr><th>Order ID</th><th>Date</th><th>Customer</th><th>Amount</th><th>Status</th></tr></thead><tbody>`;
             ordersList.forEach(order => {
                 html += `<tr>
-                    <td>${order.OrderID || 'N/A'}</td>
-                    <td>${order.OrderDate || 'N/A'}</td>
-                    <td>${order.CustomerName || 'N/A'}</td>
-                    <td>RM ${order.OrderAmount || 0}</td>
-                    <td><span class="${order.OrderStatus === 'Paid' ? 'status-paid' : 'status-pending'}">${order.OrderStatus || 'Pending'}</span></td>
+                    <td>${order.OrderID || 'N/A'} </td>
+                    <td>${order.OrderDate || 'N/A'} </td>
+                    <td>${order.CustomerName || 'N/A'} </td>
+                    <td>RM ${order.OrderAmount || 0} </td>
+                    <td><span class="${order.OrderStatus === 'Paid' ? 'status-paid' : 'status-pending'}">${order.OrderStatus || 'Pending'}</span> </td>
                 </tr>`;
             });
             html += `</tbody></table>`;
@@ -896,17 +924,14 @@
     
     // ==================== PAGE NAVIGATION ====================
     function showPage(pageId, fromBack = false) {
-        // Hide all pages
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById(pageId).classList.add('active');
         
-        // Update history (unless from back button)
         if (!fromBack) {
             pageHistory.push(pageId);
         }
         updateBackButton();
         
-        // Load data based on page
         if (pageId === 'cart') loadCartPage();
         if (pageId === 'receipt') loadReceipt();
         if (pageId === 'staff_dashboard') loadStaffDashboard();
@@ -926,6 +951,8 @@
     toggleStaffFields();
     updateBackButton();
     console.log('🚀 BSA Outlet Ready!');
+    console.log('💡 Make sure XAMPP is running!');
+    console.log('💡 API URL: ' + API_URL);
 </script>
 </body>
 </html>

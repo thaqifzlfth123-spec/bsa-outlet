@@ -5,19 +5,19 @@ header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
 $servername = "localhost";
-$serverid = "root";
-$serverpassword = "";
-$database = "bsaoutletdb";
+$username = "root";
+$password = "";
+$dbname = "bsaoutletdb";
 
-$dbconnect = mysqli_connect($servername, $serverid, $serverpassword, $database);
+$conn = mysqli_connect($servername, $username, $password, $dbname);
 
-if (!$dbconnect) {
-    echo json_encode(['success' => false, 'message' => 'Connection failed']);
+if (!$conn) {
+    echo json_encode(['success' => false, 'message' => 'Connection failed: ' . mysqli_connect_error()]);
     exit;
 }
 
 $input = json_decode(file_get_contents('php://input'), true);
-$stockId = mysqli_real_escape_string($dbconnect, $input['stockId'] ?? '');
+$stockId = mysqli_real_escape_string($conn, $input['stockId'] ?? '');
 
 if (empty($stockId)) {
     echo json_encode(['success' => false, 'message' => 'Stock ID required']);
@@ -25,13 +25,12 @@ if (empty($stockId)) {
 }
 
 $sql = "DELETE FROM stock WHERE StockID = '$stockId'";
-$result = mysqli_query($dbconnect, $sql);
 
-if ($result) {
+if (mysqli_query($conn, $sql)) {
     echo json_encode(['success' => true, 'message' => 'Product deleted successfully!']);
 } else {
-    echo json_encode(['success' => false, 'message' => 'Failed to delete product']);
+    echo json_encode(['success' => false, 'message' => 'Failed to delete product: ' . mysqli_error($conn)]);
 }
 
-mysqli_close($dbconnect);
+mysqli_close($conn);
 ?>
