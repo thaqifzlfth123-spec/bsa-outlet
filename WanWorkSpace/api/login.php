@@ -32,12 +32,11 @@ if (empty($email) || empty($password)) {
     exit;
 }
 
-$hashedPassword = md5($password);
-
+// Banding terus dengan password dalam database (no MD5)
 if ($userType === 'customer') {
     $sql = "SELECT CustomerID as id, CustomerName as name, CustomerEmail as email, CustomerAddress as address 
             FROM customer 
-            WHERE CustomerEmail = '$email' AND CustomerPassword = '$hashedPassword'";
+            WHERE CustomerEmail = '$email' AND CustomerPassword = '$password'";  // Banding terus
     
     $result = mysqli_query($dbconnect, $sql);
     
@@ -56,7 +55,7 @@ if ($userType === 'customer') {
 } else if ($userType === 'staff') {
     $sql = "SELECT EmployeeID as id, EmployeeName as name, EmployeeEmail as email 
             FROM employee 
-            WHERE EmployeeEmail = '$email' AND EmployeePassword = '$hashedPassword'";
+            WHERE EmployeeEmail = '$email' AND EmployeePassword = '$password'";  // Banding terus
     
     $result = mysqli_query($dbconnect, $sql);
     

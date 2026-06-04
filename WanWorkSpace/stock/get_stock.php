@@ -2,15 +2,20 @@
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 
-$conn = mysqli_connect("localhost", "root", "", "bsaoutletdb");
+$servername = "localhost";
+$serverid = "root";
+$serverpassword = "";
+$database = "bsaoutletdb";
 
-if (!$conn) {
+$dbconnect = mysqli_connect($servername, $serverid, $serverpassword, $database);
+
+if (!$dbconnect) {
     echo json_encode(['success' => false, 'message' => 'Connection failed']);
     exit;
 }
 
-$sql = "SELECT StockID, StockName, StockPrice, StockCategory, StockQuantity FROM stock";
-$result = mysqli_query($conn, $sql);
+$sql = "SELECT StockID, StockName, StockQuantity, StockCategory, StockPrice FROM stock";
+$result = mysqli_query($dbconnect, $sql);
 
 $stock = [];
 while ($row = mysqli_fetch_assoc($result)) {
@@ -18,5 +23,5 @@ while ($row = mysqli_fetch_assoc($result)) {
 }
 
 echo json_encode(['success' => true, 'stock' => $stock]);
-mysqli_close($conn);
+mysqli_close($dbconnect);
 ?>

@@ -26,7 +26,7 @@ if (!$input) {
 $userType = mysqli_real_escape_string($dbconnect, $input['userType'] ?? '');
 $name = mysqli_real_escape_string($dbconnect, trim($input['name'] ?? ''));
 $email = mysqli_real_escape_string($dbconnect, trim($input['email'] ?? ''));
-$password = mysqli_real_escape_string($dbconnect, $input['password'] ?? '');
+$password = mysqli_real_escape_string($dbconnect, $input['password'] ?? '');  // Simpan terus
 $address = mysqli_real_escape_string($dbconnect, $input['address'] ?? '');
 $phone = mysqli_real_escape_string($dbconnect, $input['phone'] ?? '');
 
@@ -45,7 +45,9 @@ if (strlen($password) < 6) {
     exit;
 }
 
-$hashedPassword = md5($password);
+// NO MD5 - simpan password terus
+// $hashedPassword = md5($password);  // ← BUANG NI
+$plainPassword = $password;  // ← GUNA NI
 
 function generateNextId($dbconnect, $table, $prefix, $idColumn) {
     $sql = "SELECT MAX($idColumn) as max_id FROM $table";
@@ -73,8 +75,9 @@ if ($userType === 'customer') {
     
     $nextId = generateNextId($dbconnect, 'customer', 'C', 'CustomerID');
     
+    // Simpan password terus
     $sql = "INSERT INTO customer (CustomerID, CustomerName, CustomerAddress, CustomerEmail, CustomerPassword, CustomerPhone) 
-            VALUES ('$nextId', '$name', '$address', '$email', '$hashedPassword', '$phone')";
+            VALUES ('$nextId', '$name', '$address', '$email', '$plainPassword', '$phone')";
     
     $result = mysqli_query($dbconnect, $sql);
     
@@ -103,8 +106,9 @@ if ($userType === 'customer') {
     
     $nextId = generateNextId($dbconnect, 'employee', 'E', 'EmployeeID');
     
+    // Simpan password terus
     $sql = "INSERT INTO employee (EmployeeID, EmployeeName, EmployeeEmail, EmployeePassword, empAddress, EmployeePhone) 
-            VALUES ('$nextId', '$name', '$email', '$hashedPassword', '$address', '$phone')";
+            VALUES ('$nextId', '$name', '$email', '$plainPassword', '$address', '$phone')";
     
     $result = mysqli_query($dbconnect, $sql);
     

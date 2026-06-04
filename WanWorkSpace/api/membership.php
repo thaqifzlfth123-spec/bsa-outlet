@@ -30,11 +30,10 @@ if ($method === 'POST') {
         exit;
     }
     
-    // Find customer by email or name
     if (!empty($customerEmail)) {
-        $findSql = "SELECT CustomerID, IsMember FROM customer WHERE CustomerEmail = '$customerEmail'";
+        $findSql = "SELECT CustomerID FROM customer WHERE CustomerEmail = '$customerEmail'";
     } else {
-        $findSql = "SELECT CustomerID, IsMember FROM customer WHERE CustomerName = '$customerName'";
+        $findSql = "SELECT CustomerID FROM customer WHERE CustomerName = '$customerName'";
     }
     $findResult = mysqli_query($dbconnect, $findSql);
     
@@ -47,19 +46,14 @@ if ($method === 'POST') {
     $row = mysqli_fetch_assoc($findResult);
     $customerId = $row['CustomerID'];
     
-    if ($row['IsMember'] == 1) {
-        echo json_encode(['success' => false, 'message' => 'You are already a member!']);
-        mysqli_close($dbconnect);
-        exit;
-    }
-    
     $level = mysqli_real_escape_string($dbconnect, $input['level'] ?? 'Basic');
+    $date = date('Y-m-d H:i:s');
     
     $sql = "UPDATE customer 
             SET IsMember = 1, 
                 MembershipLevel = '$level', 
                 Points = 100,
-                JoinDate = NOW()
+                JoinDate = '$date'
             WHERE CustomerID = '$customerId'";
     $result = mysqli_query($dbconnect, $sql);
     
@@ -72,7 +66,7 @@ if ($method === 'POST') {
             'customerId' => $customerId
         ]);
     } else {
-        echo json_encode(['success' => false, 'message' => 'Failed to register membership: ' . mysqli_error($dbconnect)]);
+        echo json_encode(['success' => false, 'message' => 'Failed to register membership']);
     }
     
 } else if ($method === 'GET') {
