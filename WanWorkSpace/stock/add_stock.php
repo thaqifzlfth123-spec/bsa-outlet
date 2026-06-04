@@ -2,46 +2,58 @@
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
+header('Access-Control-Allow-Headers: Content-Type');
 
-$conn = mysqli_connect("localhost", "root", "", "bsaoutletdb");
+$servername = "localhost";
+$serverid = "root";
+$serverpassword = "";
+$database = "bsaoutletdb";
 
-if (!$conn) {
+$dbconnect = mysqli_connect($servername, $serverid, $serverpassword, $database);
+
+if (!$dbconnect) {
     echo json_encode(['success' => false, 'message' => 'Connection failed']);
     exit;
 }
 
-function generateId($conn) {
-    $result = mysqli_query($conn, "SELECT MAX(StockID) as max FROM stock");
+function generateNextId($dbconnect) {
+    $sql = "SELECT MAX(StockID) as max_id FROM stock";
+    $result = mysqli_query($dbconnect, $sql);
     $row = mysqli_fetch_assoc($result);
-    $max = $row['max'];
-    if ($max) {
-        $num = intval(substr($max, 1)) + 1;
+    $maxId = $row['max_id'];
+    
+    if ($maxId) {
+        $num = intval(substr($maxId, 1)) + 1;
         return 'S' . str_pad($num, 3, '0', STR_PAD_LEFT);
+    } else {
+        return 'S001';
     }
-    return 'S001';
 }
 
 $input = json_decode(file_get_contents('php://input'), true);
 
-$name = $input['name'] ?? '';
-$price = $input['price'] ?? 0;
-$category = $input['category'] ?? '';
-$quantity = $input['quantity'] ?? 0;
+$stockName = mysqli_real_escape_string($dbconnect, $input['name'] ?? '');
+$stockPrice = mysqli_real_escape_string($dbconnect, $input['price'] ?? 0);
+$stockCategory = mysqli_real_escape_string($dbconnect, $input['category'] ?? '');
+$stockQuantity = mysqli_real_escape_string($dbconnect, $input['quantity'] ?? 0);
 
-if (empty($name) || empty($price) || empty($category)) {
-    echo json_encode(['success' => false, 'message' => 'Name, price and category required']);
+if (empty($stockName) || empty($stockCategory)) {
+    echo json_encode(['success' => false, 'message' => 'Product name and category required']);
     exit;
 }
 
-$id = generateId($conn);
-$sql = "INSERT INTO stock (StockID, StockName, StockPrice, StockCategory, StockQuantity) 
-        VALUES ('$id', '$name', '$price', '$category', '$quantity')";
+$nextId = generateNextId($dbconnect);
 
-if (mysqli_query($conn, $sql)) {
-    echo json_encode(['success' => true, 'message' => 'Product added', 'stockId' => $id]);
+$sql = "INSERT INTO stock (StockID, StockName, StockQuantity, StockCategory, StockPrice) 
+        VALUES ('$nextId', '$stockName', '$stockQuantity', '$stockCategory', '$stockPrice')";
+
+$result = mysqli_query($dbconnect, $sql);
+
+if ($result) {
+    echo json_encode(['success' => true, 'message' => 'Stock added successfully!', 'stockId' => $nextId]);
 } else {
-    echo json_encode(['success' => false, 'message' => 'Failed: ' . mysqli_error($conn)]);
+    echo json_encode(['success' => false, 'message' => 'Failed to add stock: ' . mysqli_error($dbconnect)]);
 }
 
-mysqli_close($conn);
+mysqli_close($dbconnect);
 ?>

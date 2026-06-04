@@ -2,15 +2,20 @@
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 
-$conn = mysqli_connect("localhost", "root", "", "bsaoutletdb");
+$servername = "localhost";
+$serverid = "root";
+$serverpassword = "";
+$database = "bsaoutletdb";
 
-if (!$conn) {
+$dbconnect = mysqli_connect($servername, $serverid, $serverpassword, $database);
+
+if (!$dbconnect) {
     echo json_encode(['success' => false, 'message' => 'Connection failed']);
     exit;
 }
 
-$sql = "SELECT CustomerID, CustomerName, CustomerEmail, CustomerPhone, IsMember, MembershipLevel FROM customer";
-$result = mysqli_query($conn, $sql);
+$sql = "SELECT CustomerID, CustomerName, CustomerAddress, CustomerEmail, CustomerPhone FROM customer";
+$result = mysqli_query($dbconnect, $sql);
 
 $customers = [];
 while ($row = mysqli_fetch_assoc($result)) {
@@ -18,5 +23,5 @@ while ($row = mysqli_fetch_assoc($result)) {
 }
 
 echo json_encode(['success' => true, 'customers' => $customers]);
-mysqli_close($conn);
+mysqli_close($dbconnect);
 ?>
