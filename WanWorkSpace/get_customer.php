@@ -5,16 +5,16 @@ header('Access-Control-Allow-Origin: *');
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "bsaoutletdb";
+$database = "bsaoutletdb";
 
-$conn = mysqli_connect($servername, $username, $password, $dbname);
+$conn = mysqli_connect($servername, $username, $password, $database);
 
 if (!$conn) {
     echo json_encode(['success' => false, 'message' => 'Connection failed: ' . mysqli_connect_error()]);
     exit;
 }
 
-$sql = "SELECT CustomerID, CustomerName, CustomerEmail, CustomerPhone, CustomerAddress FROM customer";
+$sql = "SELECT CustomerID, CustomerName, CustomerEmail, CustomerPhone, CustomerAddress, IsMember, MembershipLevel, Points FROM customer";
 $result = mysqli_query($conn, $sql);
 
 $customers = [];

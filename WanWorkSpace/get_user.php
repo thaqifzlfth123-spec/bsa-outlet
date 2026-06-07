@@ -4,23 +4,23 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET');
 
 $servername = "localhost";
-$serverid = "root";
-$serverpassword = "";
+$username = "root";
+$password = "";
 $database = "bsaoutletdb";
 
-$dbconnect = mysqli_connect($servername, $serverid, $serverpassword, $database);
+$conn = mysqli_connect($servername, $username, $password, $database);
 
-if (!$dbconnect) {
+if (!$conn) {
     echo json_encode(['success' => false, 'message' => 'Database Connection Error']);
     exit;
 }
 
-$email = mysqli_real_escape_string($dbconnect, $_GET['email'] ?? '');
-$userType = mysqli_real_escape_string($dbconnect, $_GET['userType'] ?? '');
+$email = mysqli_real_escape_string($conn, $_GET['email'] ?? '');
+$userType = mysqli_real_escape_string($conn, $_GET['userType'] ?? '');
 
 if (empty($email)) {
     echo json_encode(['success' => false, 'message' => 'Email required']);
-    mysqli_close($dbconnect);
+    mysqli_close($conn);
     exit;
 }
 
@@ -28,7 +28,7 @@ if ($userType === 'customer') {
     $sql = "SELECT CustomerID as id, CustomerName as name, CustomerEmail as email, CustomerAddress as address, 
                    IsMember, MembershipLevel, Points 
             FROM customer WHERE CustomerEmail = '$email'";
-    $result = mysqli_query($dbconnect, $sql);
+    $result = mysqli_query($conn, $sql);
     
     if (mysqli_num_rows($result) > 0) {
         $user = mysqli_fetch_assoc($result);
@@ -38,10 +38,10 @@ if ($userType === 'customer') {
     }
     
 } else if ($userType === 'staff') {
-    $sql = "SELECT EmployeeID as id, EmployeeName as name, EmployeeEmail as email, empDOB as dob, 
-                   empAddress as address, EmployeePhone as phone 
+    $sql = "SELECT EmployeeID as id, EmployeeName as name, EmployeeEmail as email, EmpDOB as dob, 
+                   EmpAddress as address, EmployeePhone as phone 
             FROM employee WHERE EmployeeEmail = '$email'";
-    $result = mysqli_query($dbconnect, $sql);
+    $result = mysqli_query($conn, $sql);
     
     if (mysqli_num_rows($result) > 0) {
         $user = mysqli_fetch_assoc($result);
@@ -51,22 +51,20 @@ if ($userType === 'customer') {
     }
     
 } else {
-    // Try customer first
     $sql = "SELECT CustomerID as id, CustomerName as name, CustomerEmail as email, 'customer' as type 
             FROM customer WHERE CustomerEmail = '$email'";
-    $result = mysqli_query($dbconnect, $sql);
+    $result = mysqli_query($conn, $sql);
     
     if (mysqli_num_rows($result) > 0) {
         $user = mysqli_fetch_assoc($result);
         echo json_encode(['success' => true, 'user' => $user]);
-        mysqli_close($dbconnect);
+        mysqli_close($conn);
         exit;
     }
     
-    // Try employee
     $sql = "SELECT EmployeeID as id, EmployeeName as name, EmployeeEmail as email, 'staff' as type 
             FROM employee WHERE EmployeeEmail = '$email'";
-    $result = mysqli_query($dbconnect, $sql);
+    $result = mysqli_query($conn, $sql);
     
     if (mysqli_num_rows($result) > 0) {
         $user = mysqli_fetch_assoc($result);
@@ -76,5 +74,5 @@ if ($userType === 'customer') {
     }
 }
 
-mysqli_close($dbconnect);
+mysqli_close($conn);
 ?>

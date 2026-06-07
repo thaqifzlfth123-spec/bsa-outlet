@@ -4,20 +4,20 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 
 $servername = "localhost";
-$serverid = "root";
-$serverpassword = "";
+$username = "root";
+$password = "";
 $database = "bsaoutletdb";
 
-$dbconnect = mysqli_connect($servername, $serverid, $serverpassword, $database);
+$conn = mysqli_connect($servername, $username, $password, $database);
 
-if (!$dbconnect) {
+if (!$conn) {
     echo json_encode(['success' => false, 'message' => 'Connection failed']);
     exit;
 }
 
-function generateNextId($dbconnect) {
+function generateNextId($conn) {
     $sql = "SELECT MAX(FeedbackID) as max_id FROM feedback";
-    $result = mysqli_query($dbconnect, $sql);
+    $result = mysqli_query($conn, $sql);
     $row = mysqli_fetch_assoc($result);
     $maxId = $row['max_id'];
     
@@ -31,27 +31,27 @@ function generateNextId($dbconnect) {
 
 $input = json_decode(file_get_contents('php://input'), true);
 
-$orderId = mysqli_real_escape_string($dbconnect, $input['orderId'] ?? '');
-$customerId = mysqli_real_escape_string($dbconnect, $input['customerId'] ?? '');
+$orderId = mysqli_real_escape_string($conn, $input['orderId'] ?? '');
+$customerId = mysqli_real_escape_string($conn, $input['customerId'] ?? '');
 
 if (empty($orderId) || empty($customerId)) {
     echo json_encode(['success' => false, 'message' => 'Order ID and Customer ID required']);
     exit;
 }
 
-$nextId = generateNextId($dbconnect);
+$nextId = generateNextId($conn);
 $date = date('Y-m-d');
 
 $sql = "INSERT INTO feedback (FeedbackID, FeedbackDate, OrderID, CustomerID) 
         VALUES ('$nextId', '$date', '$orderId', '$customerId')";
 
-$result = mysqli_query($dbconnect, $sql);
+$result = mysqli_query($conn, $sql);
 
 if ($result) {
     echo json_encode(['success' => true, 'message' => 'Feedback submitted', 'feedbackId' => $nextId]);
 } else {
-    echo json_encode(['success' => false, 'message' => 'Failed to submit feedback']);
+    echo json_encode(['success' => false, 'message' => 'Failed to submit feedback: ' . mysqli_error($conn)]);
 }
 
-mysqli_close($dbconnect);
+mysqli_close($conn);
 ?>

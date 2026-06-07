@@ -1,12 +1,13 @@
 <?php
 header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
 
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "bsaoutletdb";
+$database = "bsaoutletdb";
 
-$conn = mysqli_connect($servername, $username, $password, $dbname);
+$conn = mysqli_connect($servername, $username, $password, $database);
 
 if (!$conn) {
     echo json_encode([
@@ -17,15 +18,21 @@ if (!$conn) {
     exit;
 }
 
-$sql = "SELECT COUNT(*) as total FROM stock";
-$result = mysqli_query($conn, $sql);
-$row = mysqli_fetch_assoc($result);
+$stockResult = mysqli_query($conn, "SELECT COUNT(*) as total FROM stock");
+$stockRow = mysqli_fetch_assoc($stockResult);
+$customerResult = mysqli_query($conn, "SELECT COUNT(*) as total FROM customer");
+$customerRow = mysqli_fetch_assoc($customerResult);
+$orderResult = mysqli_query($conn, "SELECT COUNT(*) as total FROM orders");
+$orderRow = mysqli_fetch_assoc($orderResult);
 
 echo json_encode([
     'success' => true,
     'message' => 'API is working!',
-    'database' => $dbname,
-    'stock_count' => $row['total'],
+    'database' => $database,
+    'stock_count' => $stockRow['total'],
+    'customer_count' => $customerRow['total'],
+    'order_count' => $orderRow['total'],
+    'api_path' => __DIR__,
     'timestamp' => date('Y-m-d H:i:s')
 ]);
 

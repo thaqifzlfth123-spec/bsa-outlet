@@ -3,7 +3,12 @@ header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 
-$conn = mysqli_connect("localhost", "root", "", "bsaoutletdb");
+$servername = "localhost";
+$username = "root";
+$password = "";
+$database = "bsaoutletdb";
+
+$conn = mysqli_connect($servername, $username, $password, $database);
 
 if (!$conn) {
     echo json_encode(['success' => false, 'message' => 'Connection failed']);
@@ -23,10 +28,9 @@ function generateId($conn) {
 
 $input = json_decode(file_get_contents('php://input'), true);
 
-$customerId = $input['customerId'] ?? '';
-$customerName = $input['customerName'] ?? '';
-$orderAmount = $input['orderAmount'] ?? 0;
-$items = $input['items'] ?? '';
+$customerId = mysqli_real_escape_string($conn, $input['customerId'] ?? '');
+$customerName = mysqli_real_escape_string($conn, $input['customerName'] ?? '');
+$orderAmount = mysqli_real_escape_string($conn, $input['orderAmount'] ?? 0);
 
 if (empty($customerId) || empty($orderAmount)) {
     echo json_encode(['success' => false, 'message' => 'Customer and amount required']);

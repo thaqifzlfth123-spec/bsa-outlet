@@ -5,13 +5,13 @@ header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
 $servername = "localhost";
-$serverid = "root";
-$serverpassword = "";
+$username = "root";
+$password = "";
 $database = "bsaoutletdb";
 
-$dbconnect = mysqli_connect($servername, $serverid, $serverpassword, $database);
+$conn = mysqli_connect($servername, $username, $password, $database);
 
-if (!$dbconnect) {
+if (!$conn) {
     echo json_encode(['success' => false, 'message' => 'Database Connection Error']);
     exit;
 }
@@ -23,22 +23,21 @@ if (!$input) {
     exit;
 }
 
-$userType = mysqli_real_escape_string($dbconnect, $input['userType'] ?? '');
-$email = mysqli_real_escape_string($dbconnect, trim($input['email'] ?? ''));
-$password = mysqli_real_escape_string($dbconnect, $input['password'] ?? '');
+$userType = mysqli_real_escape_string($conn, $input['userType'] ?? '');
+$email = mysqli_real_escape_string($conn, trim($input['email'] ?? ''));
+$passwordInput = mysqli_real_escape_string($conn, $input['password'] ?? '');
 
-if (empty($email) || empty($password)) {
+if (empty($email) || empty($passwordInput)) {
     echo json_encode(['success' => false, 'message' => 'Email and password required']);
     exit;
 }
 
-// Banding terus dengan password dalam database (no MD5)
 if ($userType === 'customer') {
-    $sql = "SELECT CustomerID as id, CustomerName as name, CustomerEmail as email, CustomerAddress as address 
+    $sql = "SELECT CustomerID as id, CustomerName as name, CustomerEmail as email, CustomerAddress as address, CustomerPhone as phone
             FROM customer 
-            WHERE CustomerEmail = '$email' AND CustomerPassword = '$password'";  // Banding terus
+            WHERE CustomerEmail = '$email' AND CustomerPassword = '$passwordInput'";
     
-    $result = mysqli_query($dbconnect, $sql);
+    $result = mysqli_query($conn, $sql);
     
     if (mysqli_num_rows($result) > 0) {
         $user = mysqli_fetch_assoc($result);
@@ -55,9 +54,9 @@ if ($userType === 'customer') {
 } else if ($userType === 'staff') {
     $sql = "SELECT EmployeeID as id, EmployeeName as name, EmployeeEmail as email 
             FROM employee 
-            WHERE EmployeeEmail = '$email' AND EmployeePassword = '$password'";  // Banding terus
+            WHERE EmployeeEmail = '$email' AND EmployeePassword = '$passwordInput'";
     
-    $result = mysqli_query($dbconnect, $sql);
+    $result = mysqli_query($conn, $sql);
     
     if (mysqli_num_rows($result) > 0) {
         $user = mysqli_fetch_assoc($result);
@@ -75,5 +74,5 @@ if ($userType === 'customer') {
     echo json_encode(['success' => false, 'message' => 'Invalid user type']);
 }
 
-mysqli_close($dbconnect);
+mysqli_close($conn);
 ?>

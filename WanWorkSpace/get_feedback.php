@@ -5,9 +5,9 @@ header('Access-Control-Allow-Origin: *');
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "bsaoutletdb";
+$database = "bsaoutletdb";
 
-$conn = mysqli_connect($servername, $username, $password, $dbname);
+$conn = mysqli_connect($servername, $username, $password, $database);
 
 if (!$conn) {
     echo json_encode(['success' => false, 'message' => 'Connection failed: ' . mysqli_connect_error()]);
