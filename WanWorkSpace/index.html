@@ -285,7 +285,9 @@
 <footer><p>© 2026 BSA Outlet. All Rights Reserved. | Premium Fashion Hub</p></footer>
 
 <script>
-    const API_URL = 'http://localhost/WanWorkSpace/';
+    // ==================== API CONFIGURATION ====================
+    const API_URL = 'http://localhost/bsaoutlet/';
+    
     console.log('🔗 API URL:', API_URL);
     
     let pageHistory = ['home'];
@@ -420,27 +422,51 @@
     
     async function loadProductsFromDB() {
         console.log('🔄 Loading products from:', API_URL + 'get_stock.php');
+        
+        const grids = ['menswearProducts', 'womenswearProducts', 'kidsProducts', 'shoeProducts'];
+        grids.forEach(grid => {
+            const container = document.getElementById(grid);
+            if (container) {
+                container.innerHTML = '<p style="text-align:center; padding:40px;">Loading products...</p>';
+            }
+        });
+        
         try {
             const response = await fetch(API_URL + 'get_stock.php');
             const data = await response.json();
             console.log('📦 API Response:', data);
-            if (data.success && data.stock) {
+            
+            if (data.success && data.stock && data.stock.length > 0) {
                 const menswear = data.stock.filter(p => p.StockCategory === 'Menswear');
                 const womenswear = data.stock.filter(p => p.StockCategory === 'Womenswear');
                 const kids = data.stock.filter(p => p.StockCategory === 'Kids');
                 const shoe = data.stock.filter(p => p.StockCategory === 'Shoe');
+                
                 displayProductGrid('menswearProducts', menswear);
                 displayProductGrid('womenswearProducts', womenswear);
                 displayProductGrid('kidsProducts', kids);
                 displayProductGrid('shoeProducts', shoe);
+                
                 document.getElementById('homeProductCount').innerHTML = data.stock.length;
+                showNotification(`✅ ${data.stock.length} products loaded!`, 'success');
             } else {
-                console.error('API returned error:', data);
-                showNotification('Error loading products: ' + (data.message || 'Unknown error'), 'error');
+                console.error('No products found:', data);
+                grids.forEach(grid => {
+                    const container = document.getElementById(grid);
+                    if (container) {
+                        container.innerHTML = '<p style="text-align:center; padding:40px;">No products available. Staff can add products in dashboard.</p>';
+                    }
+                });
             }
         } catch (error) {
             console.error('❌ Error loading products:', error);
-            showNotification('Error loading products from database. Make sure XAMPP is running!', 'error');
+            showNotification('Error loading products. Make sure XAMPP is running!', 'error');
+            grids.forEach(grid => {
+                const container = document.getElementById(grid);
+                if (container) {
+                    container.innerHTML = '<p style="text-align:center; padding:40px; color:#ff4444;">❌ Error loading products. Make sure XAMPP is running at localhost!</p>';
+                }
+            });
         }
     }
     
@@ -499,7 +525,7 @@
                         <td><button class="delete-btn" onclick="deleteStock('${item.StockID}')">Delete</button></td>
                     </tr>`;
                 });
-                html += `</tbody></table></div>`;
+                html += `</tbody><table></div>`;
                 document.getElementById('staffProductsList').innerHTML = html;
                 document.getElementById('staffTotalProducts').innerHTML = data.stock.length;
             } else {
@@ -718,7 +744,7 @@
                 <div class="stat-card"><div class="stat-number">${pendingOrders}</div><div class="stat-label">Pending</div></div>
                 <div class="stat-card"><div class="stat-number">${ordersList.length}</div><div class="stat-label">Total Orders</div></div>
             `;
-            let html = `<table><thead><tr><th>Order ID</th><th>Date</th><th>Customer</th><th>Amount</th><th>Status</th></tr></thead><tbody>`;
+            let html = `<table><thead><tr><th>Order ID</th><th>Date</th><th>Customer</th><th>Amount</th><th>Status</th></table></thead><tbody>`;
             ordersList.forEach(order => {
                 html += `<tr>
                     <td>${order.OrderID || 'N/A'}</td>

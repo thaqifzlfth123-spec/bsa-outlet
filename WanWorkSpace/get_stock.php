@@ -5,7 +5,7 @@ header('Access-Control-Allow-Origin: *');
 $servername = "localhost";
 $username = "root";
 $password = "";
-$database = "bsaoutletdb";
+$database = "bsaoutlet";
 
 $conn = mysqli_connect($servername, $username, $password, $database);
 
@@ -18,14 +18,10 @@ $sql = "SELECT StockID, StockName, StockQuantity, StockCategory, StockPrice FROM
 $result = mysqli_query($conn, $sql);
 
 $stock = [];
-if (mysqli_num_rows($result) > 0) {
-    while ($row = mysqli_fetch_assoc($result)) {
-        $stock[] = $row;
-    }
-    echo json_encode(['success' => true, 'stock' => $stock]);
-} else {
-    echo json_encode(['success' => true, 'stock' => [], 'message' => 'No stock found']);
+while ($row = mysqli_fetch_assoc($result)) {
+    $stock[] = $row;
 }
 
+echo json_encode(['success' => true, 'stock' => $stock]);
 mysqli_close($conn);
 ?>
