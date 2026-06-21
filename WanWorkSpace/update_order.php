@@ -25,6 +25,16 @@ if (empty($orderId) || empty($status)) {
     exit;
 }
 
+// Note: order table doesn't have OrderStatus column in the original structure!
+// We need to add it first OR we can use a different approach
+
+// First, let's check if OrderStatus column exists
+$checkColumn = mysqli_query($conn, "SHOW COLUMNS FROM `order` LIKE 'OrderStatus'");
+if (mysqli_num_rows($checkColumn) == 0) {
+    // Add OrderStatus column if it doesn't exist
+    mysqli_query($conn, "ALTER TABLE `order` ADD COLUMN OrderStatus varchar(50) DEFAULT 'Pending'");
+}
+
 $sql = "UPDATE `order` SET OrderStatus = '$status' WHERE OrderID = '$orderId'";
 
 if (mysqli_query($conn, $sql)) {

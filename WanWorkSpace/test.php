@@ -22,7 +22,9 @@ $stockResult = mysqli_query($conn, "SELECT COUNT(*) as total FROM stock");
 $stockRow = mysqli_fetch_assoc($stockResult);
 $customerResult = mysqli_query($conn, "SELECT COUNT(*) as total FROM customer");
 $customerRow = mysqli_fetch_assoc($customerResult);
-$orderResult = mysqli_query($conn, "SELECT COUNT(*) as total FROM `order`");  // GUNA `order`
+$employeeResult = mysqli_query($conn, "SELECT COUNT(*) as total FROM employee");
+$employeeRow = mysqli_fetch_assoc($employeeResult);
+$orderResult = mysqli_query($conn, "SELECT COUNT(*) as total FROM `order`");
 $orderRow = mysqli_fetch_assoc($orderResult);
 
 echo json_encode([
@@ -31,6 +33,7 @@ echo json_encode([
     'database' => $database,
     'stock_count' => $stockRow['total'],
     'customer_count' => $customerRow['total'],
+    'employee_count' => $employeeRow['total'],
     'order_count' => $orderRow['total'],
     'api_path' => __DIR__,
     'timestamp' => date('Y-m-d H:i:s')

@@ -6,7 +6,7 @@ header('Access-Control-Allow-Methods: POST');
 $servername = "localhost";
 $username = "root";
 $password = "";
-$database = "bsaoutletdb";  // Changed from bsaoutlet to match SQL
+$database = "bsaoutletdb";
 
 $conn = mysqli_connect($servername, $username, $password, $database);
 
@@ -16,7 +16,7 @@ if (!$conn) {
 }
 
 function generateId($conn) {
-    $result = mysqli_query($conn, "SELECT MAX(OrderID) as max FROM orders");  // Changed from orders to orders
+    $result = mysqli_query($conn, "SELECT MAX(OrderID) as max FROM `order`");
     $row = mysqli_fetch_assoc($result);
     $max = $row['max'];
     if ($max) {
@@ -29,7 +29,8 @@ function generateId($conn) {
 $input = json_decode(file_get_contents('php://input'), true);
 
 $customerId = mysqli_real_escape_string($conn, $input['customerId'] ?? '');
-$customerName = mysqli_real_escape_string($conn, $input['customerName'] ?? '');
+$employeeId = mysqli_real_escape_string($conn, $input['employeeId'] ?? 'E001');
+$stockId = mysqli_real_escape_string($conn, $input['stockId'] ?? 'S001');
 $orderAmount = mysqli_real_escape_string($conn, $input['orderAmount'] ?? 0);
 
 if (empty($customerId) || empty($orderAmount)) {
@@ -40,8 +41,8 @@ if (empty($customerId) || empty($orderAmount)) {
 $id = generateId($conn);
 $date = date('Y-m-d');
 
-$sql = "INSERT INTO orders (OrderID, OrderDate, OrderAmount, CustomerID, CustomerName, OrderStatus) 
-        VALUES ('$id', '$date', '$orderAmount', '$customerId', '$customerName', 'Pending')";
+$sql = "INSERT INTO `order` (OrderID, OrderDate, OrderAmount, CustomerID, EmployeeID, StockID) 
+        VALUES ('$id', '$date', '$orderAmount', '$customerId', '$employeeId', '$stockId')";
 
 if (mysqli_query($conn, $sql)) {
     echo json_encode(['success' => true, 'message' => 'Order placed', 'orderId' => $id]);

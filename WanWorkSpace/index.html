@@ -77,6 +77,9 @@
         tr:hover { background: rgba(255,255,255,0.03); }
         .status-paid { background: #00c853; color: #fff; padding: 3px 12px; border-radius: 20px; font-size: 0.75rem; display: inline-block; }
         .status-pending { background: #ff4444; color: #fff; padding: 3px 12px; border-radius: 20px; font-size: 0.75rem; display: inline-block; }
+        .status-processing { background: #ff9800; color: #fff; padding: 3px 12px; border-radius: 20px; font-size: 0.75rem; display: inline-block; }
+        .status-shipped { background: #2196f3; color: #fff; padding: 3px 12px; border-radius: 20px; font-size: 0.75rem; display: inline-block; }
+        .status-delivered { background: #4caf50; color: #fff; padding: 3px 12px; border-radius: 20px; font-size: 0.75rem; display: inline-block; }
         
         .form-container { max-width: 500px; margin: 2rem auto; background: rgba(255,255,255,0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 2rem; }
         .form-group { margin-bottom: 1.2rem; }
@@ -319,8 +322,10 @@
         if (!nav) return;
         if (currentUser && currentUser.type === 'staff') {
             nav.innerHTML = `<a onclick="showPage('staff_dashboard')">Dashboard</a><a onclick="showPage('staff_products')">Products</a><a onclick="showPage('staff_orders')">Orders</a><a onclick="showPage('staff_customers')">Customers</a><a onclick="showPage('staff_reports')">Reports</a><a onclick="showPage('cart')" class="cart-link">🛒 Cart <span id="cartCount">0</span></a><a onclick="staffLogout()" class="logout-btn">Logout</a>`;
+        } else if (currentUser && currentUser.type === 'customer') {
+            nav.innerHTML = `<a onclick="showPage('home')">Home</a><a onclick="showPage('menswear')">Menswear</a><a onclick="showPage('womenswear')">Womenswear</a><a onclick="showPage('kids')">Kids</a><a onclick="showPage('shoe')">Shoe</a><a onclick="showPage('about')">About</a><a onclick="showPage('cart')" class="cart-link">🛒 Cart <span id="cartCount">0</span></a><a onclick="logout()" class="logout-btn">${currentUser.name.split(' ')[0]} | Logout</a>`;
         } else {
-            nav.innerHTML = `<a onclick="showPage('home')">Home</a><a onclick="showPage('menswear')">Menswear</a><a onclick="showPage('womenswear')">Womenswear</a><a onclick="showPage('kids')">Kids</a><a onclick="showPage('shoe')">Shoe</a><a onclick="showPage('about')">About</a><a onclick="showPage('cart')" class="cart-link">🛒 Cart <span id="cartCount">0</span></a>${currentUser ? `<a onclick="logout()" class="logout-btn">${currentUser.name.split(' ')[0]} | Logout</a>` : `<a onclick="showPage('signin')">Sign In</a>`}`;
+            nav.innerHTML = `<a onclick="showPage('home')">Home</a><a onclick="showPage('menswear')">Menswear</a><a onclick="showPage('womenswear')">Womenswear</a><a onclick="showPage('kids')">Kids</a><a onclick="showPage('shoe')">Shoe</a><a onclick="showPage('about')">About</a><a onclick="showPage('cart')" class="cart-link">🛒 Cart <span id="cartCount">0</span></a><a onclick="showPage('signin')">Sign In</a>`;
         }
         updateCartCount();
     }
@@ -393,7 +398,9 @@
                     body: JSON.stringify({
                         customerId: currentUser.id,
                         customerName: currentUser.name,
-                        orderAmount: grandTotal
+                        orderAmount: grandTotal,
+                        employeeId: 'E001',
+                        stockId: 'S001'
                     })
                 }).then(res => res.json()).then(data => {
                     if (data.success) {
@@ -525,7 +532,7 @@
                         <td><button class="delete-btn" onclick="deleteStock('${item.StockID}')">Delete</button></td>
                     </tr>`;
                 });
-                html += `</tbody><table></div>`;
+                html += `</tbody></table></div>`;
                 document.getElementById('staffProductsList').innerHTML = html;
                 document.getElementById('staffTotalProducts').innerHTML = data.stock.length;
             } else {
@@ -606,23 +613,33 @@
             const productRes = await fetch(API_URL + 'get_stock.php');
             const productData = await productRes.json();
             document.getElementById('staffTotalProducts').innerHTML = productData.stock ? productData.stock.length : 0;
+            
             const customerRes = await fetch(API_URL + 'get_customer.php');
             const customerData = await customerRes.json();
             document.getElementById('staffTotalCustomers').innerHTML = customerData.customers ? customerData.customers.length : 0;
+            
             const orderRes = await fetch(API_URL + 'get_orders.php');
             const orderData = await orderRes.json();
             const ordersList = orderData.orders || [];
             document.getElementById('staffTotalOrders').innerHTML = ordersList.length;
+            
             const feedbackRes = await fetch(API_URL + 'get_feedback.php');
             const feedbackData = await feedbackRes.json();
             document.getElementById('staffTotalFeedback').innerHTML = feedbackData.feedback ? feedbackData.feedback.length : 0;
-            let recentHtml = `<table><thead><tr><th>Order ID</th><th>Customer</th><th>Amount</th><th>Status</th></tr></thead><tbody>`;
+            
+            let recentHtml = `<table><thead><tr><th>Order ID</th><th>Customer</th><th>Employee</th><th>Amount</th><th>Status</th></tr></thead><tbody>`;
             ordersList.slice(0, 5).forEach(order => {
+                const status = order.OrderStatus || 'Pending';
+                const statusClass = status === 'Paid' ? 'status-paid' : 
+                                   status === 'Processing' ? 'status-processing' :
+                                   status === 'Shipped' ? 'status-shipped' :
+                                   status === 'Delivered' ? 'status-delivered' : 'status-pending';
                 recentHtml += `<tr>
                     <td>${order.OrderID || 'N/A'}</td>
-                    <td>${order.CustomerName || 'N/A'}</td>
+                    <td>${order.CustomerName || order.CustomerID || 'N/A'}</td>
+                    <td>${order.EmployeeName || order.EmployeeID || 'N/A'}</td>
                     <td>RM ${order.OrderAmount || 0}</td>
-                    <td><span class="${order.OrderStatus === 'Paid' ? 'status-paid' : 'status-pending'}">${order.OrderStatus || 'Pending'}</span></td>
+                    <td><span class="${statusClass}">${status}</span></td>
                 </tr>`;
             });
             recentHtml += `</tbody></table>`;
@@ -636,31 +653,50 @@
         try {
             const response = await fetch(API_URL + 'get_orders.php');
             const data = await response.json();
+            console.log('Orders data:', data);
+            
             const ordersList = data.orders || [];
-            let html = `<table><thead><tr><th>Order ID</th><th>Date</th><th>Customer</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead><tbody>`;
-            ordersList.forEach(order => {
-                html += `<tr>
-                    <td>${order.OrderID || 'N/A'}</td>
-                    <td>${order.OrderDate || 'N/A'}</td>
-                    <td>${order.CustomerName || 'N/A'}</td>
-                    <td>RM ${order.OrderAmount || 0}</td>
-                    <td>
-                        <select id="status_${order.OrderID}">
-                            <option ${order.OrderStatus === 'Pending' ? 'selected' : ''}>Pending</option>
-                            <option ${order.OrderStatus === 'Processing' ? 'selected' : ''}>Processing</option>
-                            <option ${order.OrderStatus === 'Paid' ? 'selected' : ''}>Paid</option>
-                            <option ${order.OrderStatus === 'Shipped' ? 'selected' : ''}>Shipped</option>
-                            <option ${order.OrderStatus === 'Delivered' ? 'selected' : ''}>Delivered</option>
-                        </select>
-                    </td>
-                    <td><button class="btn-outline" style="padding:5px 10px;" onclick="updateOrderStatus('${order.OrderID}', document.getElementById('status_${order.OrderID}').value)">Update</button></td>
-                </tr>`;
-            });
+            let html = `<table><thead><tr>
+                <th>Order ID</th>
+                <th>Date</th>
+                <th>Customer</th>
+                <th>Employee</th>
+                <th>Stock ID</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr></thead><tbody>`;
+            
+            if (ordersList.length === 0) {
+                html += `<tr><td colspan="8" style="text-align:center;padding:20px;">No orders found</td></tr>`;
+            } else {
+                ordersList.forEach(order => {
+                    const status = order.OrderStatus || 'Pending';
+                    html += `<tr>
+                        <td>${order.OrderID || 'N/A'}</td>
+                        <td>${order.OrderDate || 'N/A'}</td>
+                        <td>${order.CustomerName || order.CustomerID || 'N/A'}</td>
+                        <td>${order.EmployeeName || order.EmployeeID || 'N/A'}</td>
+                        <td>${order.StockID || 'N/A'}</td>
+                        <td>RM ${order.OrderAmount || 0}</td>
+                        <td>
+                            <select id="status_${order.OrderID}" style="background:rgba(255,255,255,0.05);color:#fff;border:1px solid rgba(255,255,255,0.1);padding:5px 8px;border-radius:8px;">
+                                <option ${status === 'Pending' ? 'selected' : ''}>Pending</option>
+                                <option ${status === 'Processing' ? 'selected' : ''}>Processing</option>
+                                <option ${status === 'Paid' ? 'selected' : ''}>Paid</option>
+                                <option ${status === 'Shipped' ? 'selected' : ''}>Shipped</option>
+                                <option ${status === 'Delivered' ? 'selected' : ''}>Delivered</option>
+                            </select>
+                        </td>
+                        <td><button class="btn-outline" style="padding:5px 10px;font-size:0.8rem;" onclick="updateOrderStatus('${order.OrderID}', document.getElementById('status_${order.OrderID}').value)">Update</button></td>
+                    </tr>`;
+                });
+            }
             html += `</tbody></table>`;
-            document.getElementById('staffOrdersTable').innerHTML = html || '<p>No orders</p>';
+            document.getElementById('staffOrdersTable').innerHTML = html;
         } catch (error) {
-            console.error('Error:', error);
-            document.getElementById('staffOrdersTable').innerHTML = '<p>Error loading orders</p>';
+            console.error('Error loading orders:', error);
+            document.getElementById('staffOrdersTable').innerHTML = '<p style="color:#ff4444;">Error loading orders. Make sure XAMPP is running!</p>';
         }
     }
     
@@ -677,9 +713,10 @@
                 loadStaffOrders();
                 loadStaffDashboard();
             } else {
-                showNotification('❌ Update failed', 'error');
+                showNotification('❌ Update failed: ' + result.message, 'error');
             }
         } catch (error) {
+            console.error('Error:', error);
             showNotification('❌ Error updating order', 'error');
         }
     }
@@ -737,21 +774,29 @@
             const ordersList = data.orders || [];
             let totalRevenue = ordersList.reduce((sum, o) => sum + (parseFloat(o.OrderAmount) || 0), 0);
             let paidOrders = ordersList.filter(o => o.OrderStatus === 'Paid').length;
-            let pendingOrders = ordersList.filter(o => o.OrderStatus === 'Pending').length;
+            let pendingOrders = ordersList.filter(o => o.OrderStatus === 'Pending' || o.OrderStatus === 'Processing').length;
+            
             document.getElementById('reportStats').innerHTML = `
                 <div class="stat-card"><div class="stat-number">RM ${totalRevenue.toFixed(2)}</div><div class="stat-label">Revenue</div></div>
                 <div class="stat-card"><div class="stat-number">${paidOrders}</div><div class="stat-label">Paid</div></div>
                 <div class="stat-card"><div class="stat-number">${pendingOrders}</div><div class="stat-label">Pending</div></div>
                 <div class="stat-card"><div class="stat-number">${ordersList.length}</div><div class="stat-label">Total Orders</div></div>
             `;
-            let html = `<table><thead><tr><th>Order ID</th><th>Date</th><th>Customer</th><th>Amount</th><th>Status</th></table></thead><tbody>`;
+            
+            let html = `<table><thead><tr><th>Order ID</th><th>Date</th><th>Customer</th><th>Employee</th><th>Amount</th><th>Status</th></tr></thead><tbody>`;
             ordersList.forEach(order => {
+                const status = order.OrderStatus || 'Pending';
+                const statusClass = status === 'Paid' ? 'status-paid' : 
+                                   status === 'Processing' ? 'status-processing' :
+                                   status === 'Shipped' ? 'status-shipped' :
+                                   status === 'Delivered' ? 'status-delivered' : 'status-pending';
                 html += `<tr>
                     <td>${order.OrderID || 'N/A'}</td>
                     <td>${order.OrderDate || 'N/A'}</td>
-                    <td>${order.CustomerName || 'N/A'}</td>
+                    <td>${order.CustomerName || order.CustomerID || 'N/A'}</td>
+                    <td>${order.EmployeeName || order.EmployeeID || 'N/A'}</td>
                     <td>RM ${order.OrderAmount || 0}</td>
-                    <td><span class="${order.OrderStatus === 'Paid' ? 'status-paid' : 'status-pending'}">${order.OrderStatus || 'Pending'}</span></td>
+                    <td><span class="${statusClass}">${status}</span></td>
                 </tr>`;
             });
             html += `</tbody></table>`;
@@ -804,8 +849,12 @@
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
                 updateNavbar();
                 showNotification(`✅ Welcome ${result.user.name}!`, 'success');
-                if (currentUser.type === 'staff') showPage('staff_dashboard');
-                else showPage('home');
+                if (currentUser.type === 'staff') {
+                    document.getElementById('staffName').innerHTML = result.user.name;
+                    showPage('staff_dashboard');
+                } else {
+                    showPage('home');
+                }
             } else {
                 showNotification(`❌ ${result.message}`, 'error');
             }
@@ -923,11 +972,18 @@
         window.scrollTo(0, 0);
     }
     
+    // ==================== INIT ====================
     loadProductsFromDB();
     updateNavbar();
     setUserType('customer');
     toggleStaffFields();
     updateBackButton();
+    
+    // Check if user is logged in
+    if (currentUser && currentUser.type === 'staff') {
+        document.getElementById('staffName').innerHTML = currentUser.name;
+    }
+    
     console.log('🚀 BSA Outlet Ready!');
     console.log('💡 API URL: ' + API_URL);
 </script>
