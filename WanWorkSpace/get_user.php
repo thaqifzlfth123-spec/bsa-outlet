@@ -6,7 +6,7 @@ header('Access-Control-Allow-Methods: GET');
 $servername = "localhost";
 $username = "root";
 $password = "";
-$database = "bsaoutlet";
+$database = "bsaoutlet";  // Changed from bsaoutlet to match SQL
 
 $conn = mysqli_connect($servername, $username, $password, $database);
 

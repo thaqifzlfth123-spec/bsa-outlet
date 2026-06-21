@@ -22,7 +22,7 @@ $stockResult = mysqli_query($conn, "SELECT COUNT(*) as total FROM stock");
 $stockRow = mysqli_fetch_assoc($stockResult);
 $customerResult = mysqli_query($conn, "SELECT COUNT(*) as total FROM customer");
 $customerRow = mysqli_fetch_assoc($customerResult);
-$orderResult = mysqli_query($conn, "SELECT COUNT(*) as total FROM orders");
+$orderResult = mysqli_query($conn, "SELECT COUNT(*) as total FROM `order`");  // GUNA `order`
 $orderRow = mysqli_fetch_assoc($orderResult);
 
 echo json_encode([

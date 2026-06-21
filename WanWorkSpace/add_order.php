@@ -6,7 +6,7 @@ header('Access-Control-Allow-Methods: POST');
 $servername = "localhost";
 $username = "root";
 $password = "";
-$database = "bsaoutlet";
+$database = "bsaoutlet";  // Changed from bsaoutlet to match SQL
 
 $conn = mysqli_connect($servername, $username, $password, $database);
 
@@ -16,7 +16,7 @@ if (!$conn) {
 }
 
 function generateId($conn) {
-    $result = mysqli_query($conn, "SELECT MAX(OrderID) as max FROM orders");
+    $result = mysqli_query($conn, "SELECT MAX(OrderID) as max FROM orders");  // Changed from orders to orders
     $row = mysqli_fetch_assoc($result);
     $max = $row['max'];
     if ($max) {

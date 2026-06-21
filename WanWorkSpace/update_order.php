@@ -25,7 +25,7 @@ if (empty($orderId) || empty($status)) {
     exit;
 }
 
-$sql = "UPDATE orders SET OrderStatus = '$status' WHERE OrderID = '$orderId'";
+$sql = "UPDATE `order` SET OrderStatus = '$status' WHERE OrderID = '$orderId'";
 
 if (mysqli_query($conn, $sql)) {
     echo json_encode(['success' => true, 'message' => 'Order updated successfully']);

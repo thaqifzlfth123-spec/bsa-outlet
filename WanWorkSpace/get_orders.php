@@ -14,7 +14,7 @@ if (!$conn) {
     exit;
 }
 
-$sql = "SELECT OrderID, OrderDate, OrderAmount, CustomerID, CustomerName, OrderStatus FROM orders ORDER BY OrderDate DESC";
+$sql = "SELECT OrderID, OrderDate, OrderAmount, CustomerID, CustomerName, OrderStatus FROM `order` ORDER BY OrderDate DESC";
 $result = mysqli_query($conn, $sql);
 
 $orders = [];
