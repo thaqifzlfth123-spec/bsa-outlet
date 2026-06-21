@@ -6,7 +6,7 @@ header('Access-Control-Allow-Methods: POST');
 $servername = "localhost";
 $username = "root";
 $password = "";
-$database = "bsaoutlet";
+$database = "bsaoutletdb";
 
 $conn = mysqli_connect($servername, $username, $password, $database);
 

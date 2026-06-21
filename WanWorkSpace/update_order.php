@@ -7,7 +7,7 @@ header('Access-Control-Allow-Headers: Content-Type');
 $servername = "localhost";
 $username = "root";
 $password = "";
-$database = "bsaoutlet";
+$database = "bsaoutletdb";
 
 $conn = mysqli_connect($servername, $username, $password, $database);
 
