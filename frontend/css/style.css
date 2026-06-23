@@ -1,0 +1,60 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    background:#f5f7fa;
+}
+
+.hero-section{
+    background:linear-gradient(
+        135deg,
+        #0f172a,
+        #1e293b
+    );
+
+    color:white;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+}
+
+.hero-section h1{
+    font-size:4rem;
+    font-weight:700;
+}
+
+.hero-section p{
+    font-size:1.3rem;
+    color:#fbbf24;
+}
+
+.login-card{
+    width:100%;
+    max-width:450px;
+    padding:40px;
+    background:white;
+    border-radius:20px;
+    box-shadow:0 15px 35px rgba(0,0,0,.1);
+}
+
+.form-control{
+    height:50px;
+}
+
+.btn-warning{
+    height:50px;
+    font-weight:600;
+}
+
+@media(max-width:768px){
+
+    .login-card{
+        margin:20px;
+        padding:30px;
+    }
+
+}
