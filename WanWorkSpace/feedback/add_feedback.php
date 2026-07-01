@@ -6,7 +6,7 @@ header('Access-Control-Allow-Methods: POST');
 $servername = "localhost";
 $serverid = "root";
 $serverpassword = "";
-$database = "bsaoutletdb";
+$database = "bsa";
 
 $dbconnect = mysqli_connect($servername, $serverid, $serverpassword, $database);
 
@@ -34,6 +34,8 @@ $input = json_decode(file_get_contents('php://input'), true);
 $orderId = mysqli_real_escape_string($dbconnect, $input['orderId'] ?? '');
 $customerId = mysqli_real_escape_string($dbconnect, $input['customerId'] ?? '');
 
+$message = mysqli_real_escape_string($dbconnect, $input['message'] ?? '');
+
 if (empty($orderId) || empty($customerId)) {
     echo json_encode(['success' => false, 'message' => 'Order ID and Customer ID required']);
     exit;
@@ -42,8 +44,8 @@ if (empty($orderId) || empty($customerId)) {
 $nextId = generateNextId($dbconnect);
 $date = date('Y-m-d');
 
-$sql = "INSERT INTO feedback (FeedbackID, FeedbackDate, OrderID, CustomerID) 
-        VALUES ('$nextId', '$date', '$orderId', '$customerId')";
+$sql = "INSERT INTO feedback (FeedbackID, FeedbackDate, OrderID, CustomerID, Message) 
+        VALUES ('$nextId', '$date', '$orderId', '$customerId', '$message')";
 
 $result = mysqli_query($dbconnect, $sql);
 

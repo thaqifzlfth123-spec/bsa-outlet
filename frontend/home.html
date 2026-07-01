@@ -1,45 +1,29 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BSA Outlet - Home</title>
-
+    <title>BSA Outlet - High End Fashion</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css?v=5">
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
 
 <nav class="navbar navbar-expand-lg navbar-dark custom-navbar">
     <div class="container">
         <a class="navbar-brand fw-bold" href="home.html">BSA Outlet</a>
-
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
-
         <div class="collapse navbar-collapse" id="navbarMenu">
             <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a class="nav-link active" href="home.html">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="menswear.html">Menswear</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="womenswear.html">Womenswear</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="kids.html">Kids</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="shoe.html">Shoe</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="cart.html">Cart</a>
-                </li>
+                <li class="nav-item"><a class="nav-link active" href="home.html">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="menswear.html">Menswear</a></li>
+                <li class="nav-item"><a class="nav-link" href="womenswear.html">Womenswear</a></li>
+                <li class="nav-item"><a class="nav-link" href="kids.html">Kids</a></li>
+                <li class="nav-item"><a class="nav-link" href="shoe.html">Shoe</a></li>
+                <li class="nav-item"><a class="nav-link" href="cart.html">Cart</a></li>
+                <li class="nav-item"><a class="nav-link" href="#" onclick="logout()">Logout</a></li>
             </ul>
         </div>
     </div>
@@ -48,64 +32,60 @@
 <section class="home-hero">
     <div class="container text-center">
         <h1>Find Your Taste</h1>
-        <p>Discover modern fashion collections from BSA Outlet.</p>
-        <a href="menswear.html" class="btn btn-warning mt-3">Shop Now</a>
+        <p>Discover modern, luxury fashion collections curated for the sophisticated individual.</p>
+        <a href="menswear.html" class="btn btn-warning mt-4 px-5">Shop The Collection</a>
     </div>
 </section>
 
-<section class="container py-5">
-    <h2 class="text-center mb-4">Shop by Category</h2>
+<section class="container py-5 mt-5">
+    <h2 class="section-title">Shop by Category</h2>
 
-    <div class="row g-4">
-
-        <div class="col-md-3 col-sm-6">
+    <div class="row g-4 mt-4">
+        <div class="col-lg-3 col-md-6">
             <a href="menswear.html" class="category-card">
-                <div>
+                <img src="images/menswear_cat.png" alt="Menswear">
+                <div class="card-content">
                     <h3>Menswear</h3>
-                    <p>Stylish outfits for men</p>
+                    <p>Refined outfits for men</p>
                 </div>
             </a>
         </div>
-
-        <div class="col-md-3 col-sm-6">
+        <div class="col-lg-3 col-md-6">
             <a href="womenswear.html" class="category-card">
-                <div>
+                <img src="images/womenswear_cat.png" alt="Womenswear">
+                <div class="card-content">
                     <h3>Womenswear</h3>
-                    <p>Modern fashion for women</p>
+                    <p>Elegant fashion for women</p>
                 </div>
             </a>
         </div>
-
-        <div class="col-md-3 col-sm-6">
+        <div class="col-lg-3 col-md-6">
             <a href="kids.html" class="category-card">
-                <div>
+                <img src="https://images.pexels.com/photos/1620760/pexels-photo-1620760.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Kids">
+                <div class="card-content">
                     <h3>Kids</h3>
                     <p>Comfortable kids clothing</p>
                 </div>
             </a>
         </div>
-
-        <div class="col-md-3 col-sm-6">
+        <div class="col-lg-3 col-md-6">
             <a href="shoe.html" class="category-card">
-                <div>
-                    <h3>Shoe</h3>
+                <img src="https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=600&auto=format&fit=crop" alt="Shoes">
+                <div class="card-content">
+                    <h3>Shoes</h3>
                     <p>Footwear for every style</p>
                 </div>
             </a>
         </div>
-
     </div>
 </section>
 
-<section class="about-section">
-    <div class="container text-center">
-        <h2>About BSA Outlet</h2>
-        <p>
-            BSA Outlet provides a variety of clothing products including menswear,
-            womenswear, kids clothing, and shoes. Our system helps customers browse,
-            order, and manage purchases easily.
-        </p>
-    </div>
+<section class="container text-center py-5 mb-5" style="max-width: 800px;">
+    <h2 class="section-title">About BSA Outlet</h2>
+    <p class="lead text-muted mt-4">
+        BSA Outlet provides a curated selection of premium clothing products including menswear,
+        womenswear, kids clothing, and luxury footwear. Step into the future of fashion.
+    </p>
 </section>
 
 <footer class="footer">
@@ -113,6 +93,6 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="js/script.js"></script>
+<script src="js/script.js?v=7"></script>
 </body>
 </html>

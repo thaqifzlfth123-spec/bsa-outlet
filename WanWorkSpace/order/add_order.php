@@ -6,7 +6,7 @@ header('Access-Control-Allow-Methods: POST');
 $servername = "localhost";
 $serverid = "root";
 $serverpassword = "";
-$database = "bsaoutletdb";
+$database = "bsa";
 
 $dbconnect = mysqli_connect($servername, $serverid, $serverpassword, $database);
 
@@ -16,7 +16,7 @@ if (!$dbconnect) {
 }
 
 function generateNextId($dbconnect) {
-    $sql = "SELECT MAX(OrderID) as max_id FROM orders";
+    $sql = "SELECT MAX(OrderID) as max_id FROM \`order\`";
     $result = mysqli_query($dbconnect, $sql);
     $row = mysqli_fetch_assoc($result);
     $maxId = $row['max_id'];
@@ -39,6 +39,10 @@ $employeeId = mysqli_real_escape_string($dbconnect, $input['employeeId'] ?? '');
 $employeeName = mysqli_real_escape_string($dbconnect, $input['employeeName'] ?? '');
 $employeeAddress = mysqli_real_escape_string($dbconnect, $input['employeeAddress'] ?? '');
 $stockId = mysqli_real_escape_string($dbconnect, $input['stockId'] ?? '');
+$quantity = mysqli_real_escape_string($dbconnect, $input['quantity'] ?? 1);
+$size = mysqli_real_escape_string($dbconnect, $input['size'] ?? '');
+$colour = mysqli_real_escape_string($dbconnect, $input['colour'] ?? '');
+$deliveryType = mysqli_real_escape_string($dbconnect, $input['deliveryType'] ?? 'Pick Up');
 
 if (empty($customerId) || empty($orderAmount)) {
     echo json_encode(['success' => false, 'message' => 'Customer ID and Order Amount required']);
@@ -46,8 +50,8 @@ if (empty($customerId) || empty($orderAmount)) {
 }
 
 $nextId = generateNextId($dbconnect);
-$sql = "INSERT INTO orders (OrderID, OrderDate, OrderAmount, CustomerID, CustomerName, EmployeeID, EmployeeName, EmployeeAddress, StockID) 
-        VALUES ('$nextId', '$orderDate', '$orderAmount', '$customerId', '$customerName', '$employeeId', '$employeeName', '$employeeAddress', '$stockId')";
+$sql = "INSERT INTO \`order\` (OrderID, OrderDate, OrderAmount, CustomerID, CustomerName, EmployeeID, EmployeeName, EmployeeAddress, StockID, Quantity, Size, Colour, DeliveryType) 
+        VALUES ('$nextId', '$orderDate', '$orderAmount', '$customerId', '$customerName', '$employeeId', '$employeeName', '$employeeAddress', '$stockId', '$quantity', '$size', '$colour', '$deliveryType')";
 
 $result = mysqli_query($dbconnect, $sql);
 

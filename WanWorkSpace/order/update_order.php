@@ -6,7 +6,7 @@ header('Access-Control-Allow-Methods: POST');
 $servername = "localhost";
 $serverid = "root";
 $serverpassword = "";
-$database = "bsaoutletdb";
+$database = "bsa";
 
 $dbconnect = mysqli_connect($servername, $serverid, $serverpassword, $database);
 
@@ -24,7 +24,7 @@ if (empty($orderId) || empty($status)) {
     exit;
 }
 
-$sql = "UPDATE orders SET OrderStatus = '$status' WHERE OrderID = '$orderId'";
+$sql = "UPDATE \`order\` SET OrderStatus = '$status' WHERE OrderID = '$orderId'";
 $result = mysqli_query($dbconnect, $sql);
 
 if ($result) {

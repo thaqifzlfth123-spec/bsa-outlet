@@ -5,7 +5,7 @@ header('Access-Control-Allow-Origin: *');
 $servername = "localhost";
 $serverid = "root";
 $serverpassword = "";
-$database = "bsaoutletdb";
+$database = "bsa";
 
 $dbconnect = mysqli_connect($servername, $serverid, $serverpassword, $database);
 
