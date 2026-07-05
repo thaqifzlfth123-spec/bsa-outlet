@@ -152,12 +152,15 @@ async function loadProducts(category) {
             container.innerHTML = '';
             products.forEach(p => {
                 const price = parseFloat(p.StockPrice).toFixed(2);
+                const imgHTML = p.ImageURL 
+                    ? `<img src="${p.ImageURL}" alt="${p.StockName}" style="width:100%; height:100%; object-fit:cover; border-radius:10px;">` 
+                    : `<span style="font-size:3rem;">&#128255;</span>`;
                 const card = document.createElement('div');
                 card.className = 'col-lg-4 col-md-6';
                 card.innerHTML = `
                     <div class="product-card">
                         <div class="product-img">
-                            <span style="font-size:3rem;">&#128255;</span>
+                            ${imgHTML}
                         </div>
                         <h4>${p.StockName}</h4>
                         <p>Premium quality item. Stock: ${p.StockQuantity}</p>
