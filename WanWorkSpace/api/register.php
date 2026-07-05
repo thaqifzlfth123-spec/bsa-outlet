@@ -47,7 +47,7 @@ if (strlen($password) < 6) {
     exit;
 }
 
-$hashedPassword = md5($password);
+$hashedPassword = $password; // REMOVED MD5 ENCRYPTION
 
 function generateNextId($dbconnect, $table, $prefix, $idColumn) {
     $sql = "SELECT MAX($idColumn) as max_id FROM $table";

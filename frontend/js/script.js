@@ -79,9 +79,7 @@ if (registerForm) {
     });
 }
 
-function getCode() {
-    alert('Verification code sent!');
-}
+
 
 // ---------------- CART MODAL ----------------
 let _modalItemId = null;

@@ -32,7 +32,7 @@ if (empty($email) || empty($password)) {
     exit;
 }
 
-$hashedPassword = md5($password);
+$hashedPassword = $password; // REMOVED MD5 ENCRYPTION
 
 if ($userType === 'customer') {
     $sql = "SELECT CustomerID as id, CustomerName as name, CustomerEmail as email, CustomerAddress as address, CustomerPhone as phone,
