@@ -14,7 +14,7 @@ if (!$dbconnect) {
     exit;
 }
 
-$sql = "SELECT f.FeedbackID, f.FeedbackDate, f.OrderID, f.CustomerID,
+$sql = "SELECT f.FeedbackID, f.FeedbackDate, f.OrderID, f.CustomerID, f.Message,
                c.CustomerName
         FROM feedback f
         LEFT JOIN customer c ON f.CustomerID = c.CustomerID";

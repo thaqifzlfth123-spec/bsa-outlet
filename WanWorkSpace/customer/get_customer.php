@@ -14,7 +14,7 @@ if (!$dbconnect) {
     exit;
 }
 
-$sql = "SELECT CustomerID, CustomerName, CustomerAddress FROM customer";
+$sql = "SELECT CustomerID, CustomerName, CustomerAddress, IsMember, MembershipLevel, Points, CustomerEmail, CustomerPhone FROM customer";
 $result = mysqli_query($dbconnect, $sql);
 
 $customers = [];

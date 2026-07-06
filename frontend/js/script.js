@@ -492,6 +492,155 @@ async function updateStock(stockId) {
     }
 }
 
+// ---------------- EMPLOYEE: ANALYTICS ----------------
+async function loadAnalytics() {
+    const totalSalesEl = document.getElementById('totalSalesVal');
+    const ordersTodayEl = document.getElementById('ordersTodayVal');
+    const totalCustEl = document.getElementById('totalCustomersVal');
+    const chartCtx = document.getElementById('salesChart');
+    if (!totalSalesEl || !chartCtx) return;
+
+    try {
+        const response = await fetch('../WanWorkSpace/employee/get_analytics.php');
+        const data = await response.json();
+        
+        if (data.success) {
+            totalSalesEl.textContent = 'RM ' + data.analytics.totalSales.toFixed(2);
+            ordersTodayEl.textContent = data.analytics.ordersToday;
+            totalCustEl.textContent = data.analytics.totalCustomers;
+            
+            if (data.analytics.bestSelling.length > 0) {
+                const labels = data.analytics.bestSelling.map(item => item.name);
+                const quantities = data.analytics.bestSelling.map(item => item.qty);
+                
+                new Chart(chartCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Items Sold',
+                            data: quantities,
+                            backgroundColor: 'rgba(251, 191, 36, 0.8)',
+                            borderColor: 'rgba(251, 191, 36, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: { beginAtZero: true }
+                        }
+                    }
+                });
+            } else {
+                chartCtx.parentElement.innerHTML += '<p class="text-center text-muted">No sales data yet.</p>';
+            }
+        }
+    } catch (error) {
+        console.error('loadAnalytics error:', error);
+    }
+}
+
+// ---------------- EMPLOYEE: FEEDBACK ----------------
+async function loadFeedback() {
+    const tbody = document.getElementById('employeeFeedbackTableBody');
+    if (!tbody) return;
+
+    try {
+        const response = await fetch(FEEDBACK_URL + 'get_feedback.php');
+        const data = await response.json();
+
+        if (data.success && data.feedback && data.feedback.length > 0) {
+            tbody.innerHTML = '';
+            data.feedback.forEach(f => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${f.FeedbackID}</td>
+                    <td>${f.FeedbackDate}</td>
+                    <td>${f.OrderID}</td>
+                    <td>${f.CustomerName || f.CustomerID}</td>
+                    <td style="max-width: 300px; white-space: normal;">${f.Message || '<em>No message</em>'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        } else {
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center">No feedback found.</td></tr>';
+        }
+    } catch (error) {
+        console.error('loadFeedback error:', error);
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center text-danger">Failed to load feedback.</td></tr>';
+    }
+}
+
+// ---------------- EMPLOYEE: MEMBERSHIPS ----------------
+async function loadCustomers() {
+    const tbody = document.getElementById('employeeMembershipTableBody');
+    if (!tbody) return;
+
+    try {
+        const response = await fetch('../WanWorkSpace/customer/get_customer.php');
+        const data = await response.json();
+
+        if (data.success && data.customers && data.customers.length > 0) {
+            tbody.innerHTML = '';
+            data.customers.forEach(c => {
+                const isMemberChecked = c.IsMember == 1 ? 'checked' : '';
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${c.CustomerID}</td>
+                    <td>${c.CustomerName}</td>
+                    <td>${c.CustomerEmail || 'N/A'}</td>
+                    <td>${c.CustomerPhone || 'N/A'}</td>
+                    <td>
+                        <div class="form-check form-switch d-flex justify-content-center">
+                            <input class="form-check-input" type="checkbox" id="isMember_${c.CustomerID}" ${isMemberChecked}>
+                        </div>
+                    </td>
+                    <td>
+                        <select class="form-select form-select-sm" id="level_${c.CustomerID}">
+                            <option value="Non-Member" ${c.MembershipLevel === 'Non-Member' ? 'selected' : ''}>Non-Member</option>
+                            <option value="Standard" ${c.MembershipLevel === 'Standard' ? 'selected' : ''}>Standard</option>
+                            <option value="Premium" ${c.MembershipLevel === 'Premium' ? 'selected' : ''}>Premium</option>
+                            <option value="VIP" ${c.MembershipLevel === 'VIP' ? 'selected' : ''}>VIP</option>
+                        </select>
+                    </td>
+                    <td><input type="number" id="points_${c.CustomerID}" class="form-control form-control-sm text-center mx-auto" style="width: 80px;" value="${c.Points || 0}"></td>
+                    <td><button class="btn btn-sm btn-primary" onclick="updateCustomerMembership('${c.CustomerID}')">Save</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        } else {
+            tbody.innerHTML = '<tr><td colspan="8" class="text-center">No customers found.</td></tr>';
+        }
+    } catch (error) {
+        console.error('loadCustomers error:', error);
+        tbody.innerHTML = '<tr><td colspan="8" class="text-center text-danger">Failed to load customers.</td></tr>';
+    }
+}
+
+async function updateCustomerMembership(customerId) {
+    const isMember = document.getElementById('isMember_' + customerId).checked ? 1 : 0;
+    const membershipLevel = document.getElementById('level_' + customerId).value;
+    const points = document.getElementById('points_' + customerId).value;
+
+    try {
+        const response = await fetch('../WanWorkSpace/customer/update_membership.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ customerId, isMember, membershipLevel, points })
+        });
+        const data = await response.json();
+        if (data.success) {
+            alert('Membership updated!');
+        } else {
+            alert('Failed: ' + data.message);
+        }
+    } catch (error) {
+        console.error('updateCustomerMembership error:', error);
+        alert('Network error.');
+    }
+}
+
 // ---------------- INIT ----------------
 document.addEventListener('DOMContentLoaded', function() {
     const path = window.location.pathname;
@@ -501,6 +650,11 @@ document.addEventListener('DOMContentLoaded', function() {
     if (path.includes('shoe.html'))       loadProducts('Shoe');
     if (path.includes('cart.html'))       loadCart();
     if (path.includes('receipt.html'))    loadReceipt();
+    
+    // Employee views
+    if (path.includes('employee_home.html'))  loadAnalytics();
     if (path.includes('order_details.html'))  loadEmployeeOrders();
     if (path.includes('stock_details.html'))  loadEmployeeStock();
+    if (path.includes('feedback_details.html')) loadFeedback();
+    if (path.includes('membership_details.html')) loadCustomers();
 });
