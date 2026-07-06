@@ -14,6 +14,17 @@ if (!$dbconnect) {
     exit;
 }
 
+$filter = $_GET['filter'] ?? 'all';
+$dateCondition = "";
+
+if ($filter === 'today') {
+    $dateCondition = "WHERE OrderDate = CURDATE()";
+} else if ($filter === 'week') {
+    $dateCondition = "WHERE YEARWEEK(OrderDate, 1) = YEARWEEK(CURDATE(), 1)";
+} else if ($filter === 'month') {
+    $dateCondition = "WHERE YEAR(OrderDate) = YEAR(CURDATE()) AND MONTH(OrderDate) = MONTH(CURDATE())";
+}
+
 $analytics = [
     'totalSales' => 0,
     'ordersToday' => 0,
@@ -22,7 +33,7 @@ $analytics = [
 ];
 
 // 1. Total Sales
-$sqlSales = "SELECT SUM(OrderAmount) as total FROM `order`";
+$sqlSales = "SELECT SUM(OrderAmount) as total FROM `order` $dateCondition";
 $resSales = mysqli_query($dbconnect, $sqlSales);
 if ($row = mysqli_fetch_assoc($resSales)) {
     $analytics['totalSales'] = $row['total'] ? (float)$row['total'] : 0;
@@ -43,9 +54,11 @@ if ($row = mysqli_fetch_assoc($resCust)) {
 }
 
 // 4. Best Selling Products (Top 5)
+$joinCondition = $dateCondition ? "AND " . substr($dateCondition, 6) : ""; // Convert WHERE to AND for the join
 $sqlBest = "SELECT s.StockName, SUM(o.Quantity) as totalQty 
             FROM `order` o
             JOIN stock s ON o.StockID = s.StockID
+            $dateCondition
             GROUP BY o.StockID, s.StockName
             ORDER BY totalQty DESC
             LIMIT 5";

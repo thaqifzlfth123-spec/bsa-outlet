@@ -389,6 +389,28 @@ async function loadEmployeeOrders() {
         if (data.success && data.orders && data.orders.length > 0) {
             tbody.innerHTML = '';
             data.orders.forEach(order => {
+                let currentStatus = order.OrderStatus || 'Pending';
+                let badgeClass = 'warning';
+                let nextStatus = 'Processing';
+                let nextBtnClass = 'info';
+                
+                if (currentStatus === 'Processing') {
+                    badgeClass = 'info';
+                    nextStatus = 'Shipped';
+                    nextBtnClass = 'primary';
+                } else if (currentStatus === 'Shipped') {
+                    badgeClass = 'primary';
+                    nextStatus = 'Delivered';
+                    nextBtnClass = 'success';
+                } else if (currentStatus === 'Delivered') {
+                    badgeClass = 'success';
+                    nextStatus = null;
+                }
+
+                let actionHtml = nextStatus 
+                    ? `<button class="btn btn-sm btn-${nextBtnClass} w-100" onclick="advanceOrderStatus('${order.OrderID}', '${nextStatus}')">Mark ${nextStatus}</button>` 
+                    : `<span class="badge bg-success w-100 p-2">✓ Complete</span>`;
+
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>${order.OrderID}</td>
@@ -403,10 +425,19 @@ async function loadEmployeeOrders() {
                     <td>${order.Colour || 'N/A'}</td>
                     <td>RM ${order.OrderAmount}</td>
                     <td>${order.DeliveryType || 'N/A'}</td>
-                    <td><span class="badge bg-${order.OrderStatus === 'Approved' ? 'success' : 'warning'}">${order.OrderStatus || 'Pending'}</span></td>
-                    <td><button class="btn btn-sm btn-success" onclick="approveOrder('${order.OrderID}')" ${order.OrderStatus === 'Approved' ? 'disabled' : ''}>Approve</button></td>
+                    <td><span class="badge bg-${badgeClass} p-2 w-100">${currentStatus}</span></td>
+                    <td>${actionHtml}</td>
                 `;
                 tbody.appendChild(tr);
+            });
+            // Initialize DataTable
+            if ($.fn.DataTable.isDataTable('#orderTable')) {
+                $('#orderTable').DataTable().destroy();
+            }
+            $('#orderTable').DataTable({
+                dom: 'Bfrtip',
+                buttons: ['copy', 'csv', 'excel', 'pdf', 'print'],
+                order: [[0, 'desc']] // Sort by OrderID descending by default
             });
         } else {
             tbody.innerHTML = '<tr><td colspan="14" class="text-center">No orders found.</td></tr>';
@@ -417,17 +448,16 @@ async function loadEmployeeOrders() {
     }
 }
 
-async function approveOrder(orderId) {
-    if (!confirm('Approve this order?')) return;
+async function advanceOrderStatus(orderId, nextStatus) {
+    if (!confirm(`Mark order ${orderId} as ${nextStatus}?`)) return;
     try {
-        const response = await fetch(ORDER_URL + 'update_order.php', {
+        const response = await fetch(ORDER_URL + 'update_order_status.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ orderId, status: 'Approved' })
+            body: JSON.stringify({ orderId, status: nextStatus })
         });
         const data = await response.json();
         if (data.success) {
-            alert('Order approved!');
             loadEmployeeOrders();
         } else {
             alert('Failed: ' + data.message);
@@ -448,18 +478,28 @@ async function loadEmployeeStock() {
         const data = await response.json();
 
         if (data.success && data.stock) {
+            // Destroy existing DataTable if it exists
+            if ($.fn.DataTable.isDataTable('#stockTable')) {
+                $('#stockTable').DataTable().destroy();
+            }
             tbody.innerHTML = '';
             data.stock.forEach(item => {
                 const tr = document.createElement('tr');
+                const imgSrc = item.ImageURL ? item.ImageURL : 'https://via.placeholder.com/80x80?text=Item';
                 tr.innerHTML = `
                     <td>${item.StockCategory}</td>
                     <td>${item.StockName}</td>
-                    <td><input type="number" id="price_${item.StockID}" class="form-control" style="width:100px" value="${item.StockPrice}"></td>
-                    <td><img src="https://via.placeholder.com/80x80?text=Item" alt="${item.StockName}" style="border-radius:8px;"></td>
-                    <td><input type="number" id="qty_${item.StockID}" class="form-control" style="width:100px" value="${item.StockQuantity}"></td>
+                    <td><input type="number" id="price_${item.StockID}" class="form-control" style="width:100px; margin:auto;" value="${item.StockPrice}"></td>
+                    <td><img src="${imgSrc}" alt="${item.StockName}" style="width:80px; height:80px; object-fit:cover; border-radius:8px;"></td>
+                    <td><input type="number" id="qty_${item.StockID}" class="form-control" style="width:100px; margin:auto;" value="${item.StockQuantity}"></td>
                     <td><button class="btn btn-sm btn-primary" onclick="updateStock('${item.StockID}')">Save</button></td>
                 `;
                 tbody.appendChild(tr);
+            });
+            // Initialize DataTable
+            $('#stockTable').DataTable({
+                dom: 'Bfrtip',
+                buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
             });
         } else {
             tbody.innerHTML = '<tr><td colspan="6" class="text-center">No stock found.</td></tr>';
@@ -483,6 +523,7 @@ async function updateStock(stockId) {
         const data = await response.json();
         if (data.success) {
             alert('Stock updated!');
+            loadEmployeeStock();
         } else {
             alert('Failed: ' + data.message);
         }
@@ -492,8 +533,44 @@ async function updateStock(stockId) {
     }
 }
 
+// Handle Add Product Form Submission
+const addProductForm = document.getElementById('addProductForm');
+if (addProductForm) {
+    addProductForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const name = document.getElementById('newStockName').value;
+        const category = document.getElementById('newStockCategory').value;
+        const price = document.getElementById('newStockPrice').value;
+        const quantity = document.getElementById('newStockQty').value;
+        const imageUrl = document.getElementById('newStockImg').value;
+
+        try {
+            const response = await fetch(STOCK_URL + 'add_stock.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ stockName: name, stockCategory: category, stockPrice: price, stockQuantity: quantity, imageUrl: imageUrl })
+            });
+            const data = await response.json();
+            if (data.success) {
+                alert('Product added successfully!');
+                const modal = bootstrap.Modal.getInstance(document.getElementById('addProductModal'));
+                if (modal) modal.hide();
+                addProductForm.reset();
+                loadEmployeeStock();
+            } else {
+                alert('Failed to add product: ' + data.message);
+            }
+        } catch (error) {
+            console.error('Add stock error:', error);
+            alert('Network error while adding stock.');
+        }
+    });
+}
+
 // ---------------- EMPLOYEE: ANALYTICS ----------------
-async function loadAnalytics() {
+let salesChartInstance = null;
+
+async function loadAnalytics(filter = 'all') {
     const totalSalesEl = document.getElementById('totalSalesVal');
     const ordersTodayEl = document.getElementById('ordersTodayVal');
     const totalCustEl = document.getElementById('totalCustomersVal');
@@ -501,7 +578,7 @@ async function loadAnalytics() {
     if (!totalSalesEl || !chartCtx) return;
 
     try {
-        const response = await fetch('../WanWorkSpace/employee/get_analytics.php');
+        const response = await fetch(`../WanWorkSpace/employee/get_analytics.php?filter=${filter}`);
         const data = await response.json();
         
         if (data.success) {
@@ -509,11 +586,15 @@ async function loadAnalytics() {
             ordersTodayEl.textContent = data.analytics.ordersToday;
             totalCustEl.textContent = data.analytics.totalCustomers;
             
+            if (salesChartInstance) {
+                salesChartInstance.destroy();
+            }
+
             if (data.analytics.bestSelling.length > 0) {
                 const labels = data.analytics.bestSelling.map(item => item.name);
                 const quantities = data.analytics.bestSelling.map(item => item.qty);
                 
-                new Chart(chartCtx, {
+                salesChartInstance = new Chart(chartCtx, {
                     type: 'bar',
                     data: {
                         labels: labels,
@@ -533,12 +614,50 @@ async function loadAnalytics() {
                     }
                 });
             } else {
-                chartCtx.parentElement.innerHTML += '<p class="text-center text-muted">No sales data yet.</p>';
+                if(chartCtx.parentElement.querySelector('.no-data-msg')) {
+                    chartCtx.parentElement.querySelector('.no-data-msg').remove();
+                }
+                chartCtx.parentElement.insertAdjacentHTML('beforeend', '<p class="text-center text-muted no-data-msg mt-3">No sales data for this period.</p>');
             }
         }
     } catch (error) {
         console.error('loadAnalytics error:', error);
     }
+}
+
+async function loadLowStockAlerts() {
+    const alertsContainer = document.getElementById('lowStockAlerts');
+    if (!alertsContainer) return;
+
+    try {
+        const response = await fetch('../WanWorkSpace/stock/get_stock.php');
+        const data = await response.json();
+        if (data.success && data.stock) {
+            const lowStockItems = data.stock.filter(item => parseInt(item.StockQuantity) < 5);
+            if (lowStockItems.length > 0) {
+                let alertHtml = `<div class="alert alert-danger shadow-sm border-0" role="alert">
+                                    <h5 class="alert-heading">⚠️ Low Stock Alerts!</h5>
+                                    <ul class="mb-0">`;
+                lowStockItems.forEach(item => {
+                    alertHtml += `<li><strong>${item.StockName}</strong> only has ${item.StockQuantity} left in stock!</li>`;
+                });
+                alertHtml += `</ul></div>`;
+                alertsContainer.innerHTML = alertHtml;
+            } else {
+                alertsContainer.innerHTML = '';
+            }
+        }
+    } catch (error) {
+        console.error('loadLowStockAlerts error:', error);
+    }
+}
+
+// Event Listeners for Dashboard
+const analyticsFilter = document.getElementById('analyticsFilter');
+if (analyticsFilter) {
+    analyticsFilter.addEventListener('change', function(e) {
+        loadAnalytics(e.target.value);
+    });
 }
 
 // ---------------- EMPLOYEE: FEEDBACK ----------------
@@ -563,6 +682,10 @@ async function loadFeedback() {
                 `;
                 tbody.appendChild(tr);
             });
+            if ($.fn.DataTable.isDataTable('#feedbackTable')) {
+                $('#feedbackTable').DataTable().destroy();
+            }
+            $('#feedbackTable').DataTable({ dom: 'Bfrtip', buttons: ['copy', 'csv', 'excel', 'pdf', 'print'] });
         } else {
             tbody.innerHTML = '<tr><td colspan="5" class="text-center">No feedback found.</td></tr>';
         }
@@ -609,6 +732,10 @@ async function loadCustomers() {
                 `;
                 tbody.appendChild(tr);
             });
+            if ($.fn.DataTable.isDataTable('#membershipTable')) {
+                $('#membershipTable').DataTable().destroy();
+            }
+            $('#membershipTable').DataTable({ dom: 'Bfrtip', buttons: ['copy', 'csv', 'excel', 'pdf', 'print'] });
         } else {
             tbody.innerHTML = '<tr><td colspan="8" class="text-center">No customers found.</td></tr>';
         }
@@ -652,7 +779,10 @@ document.addEventListener('DOMContentLoaded', function() {
     if (path.includes('receipt.html'))    loadReceipt();
     
     // Employee views
-    if (path.includes('employee_home.html'))  loadAnalytics();
+    if (path.includes('employee_home.html')) {
+        loadAnalytics();
+        loadLowStockAlerts();
+    }
     if (path.includes('order_details.html'))  loadEmployeeOrders();
     if (path.includes('stock_details.html'))  loadEmployeeStock();
     if (path.includes('feedback_details.html')) loadFeedback();

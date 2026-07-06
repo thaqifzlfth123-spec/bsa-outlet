@@ -14,7 +14,7 @@ if (!$dbconnect) {
     exit;
 }
 
-$sql = "SELECT StockID, StockName, StockQuantity, StockCategory, StockPrice FROM stock";
+$sql = "SELECT StockID, StockName, StockQuantity, StockCategory, StockPrice, ImageURL FROM stock";
 $result = mysqli_query($dbconnect, $sql);
 
 $stock = [];

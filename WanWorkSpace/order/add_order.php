@@ -16,7 +16,7 @@ if (!$dbconnect) {
 }
 
 function generateNextId($dbconnect) {
-    $sql = "SELECT MAX(OrderID) as max_id FROM \`order\`";
+    $sql = "SELECT MAX(OrderID) as max_id FROM `order`";
     $result = mysqli_query($dbconnect, $sql);
     $row = mysqli_fetch_assoc($result);
     $maxId = $row['max_id'];
@@ -50,7 +50,7 @@ if (empty($customerId) || empty($orderAmount)) {
 }
 
 $nextId = generateNextId($dbconnect);
-$sql = "INSERT INTO \`order\` (OrderID, OrderDate, OrderAmount, CustomerID, CustomerName, EmployeeID, EmployeeName, EmployeeAddress, StockID, Quantity, Size, Colour, DeliveryType) 
+$sql = "INSERT INTO `order` (OrderID, OrderDate, OrderAmount, CustomerID, CustomerName, EmployeeID, EmployeeName, EmployeeAddress, StockID, Quantity, Size, Colour, DeliveryType) 
         VALUES ('$nextId', '$orderDate', '$orderAmount', '$customerId', '$customerName', '$employeeId', '$employeeName', '$employeeAddress', '$stockId', '$quantity', '$size', '$colour', '$deliveryType')";
 
 $result = mysqli_query($dbconnect, $sql);

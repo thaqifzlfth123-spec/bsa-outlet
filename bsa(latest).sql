@@ -128,11 +128,11 @@ CREATE TABLE `stock` (
 --
 
 INSERT INTO `stock` (`StockID`, `StockQuantity`, `StockCategory`, `StockName`, `StockPrice`, `ImageURL`) VALUES
-('S001', 50, 'Menswear', 'Basic T-Shirt', 35.00, NULL),
-('S002', 30, 'Menswear', 'Oversized Hoodie', 79.00, NULL),
-('S003', 25, 'Womenswear', 'Floral Dress', 69.00, NULL),
-('S004', 40, 'Kids', 'Kids T-Shirt', 25.00, NULL),
-('S005', 20, 'Shoe', 'Running Shoes', 99.00, NULL);
+('S001', 50, 'Menswear', 'Basic T-Shirt', 45.99, 'images/basic_tshirt.jpg'),
+('S002', 30, 'Menswear', 'Oversized Hoodie', 89.50, 'images/oversized_hoodie.jpg'),
+('S003', 25, 'Womenswear', 'Floral Dress', 129.90, 'images/floral_dress.jpg'),
+('S004', 40, 'Kids', 'Kids T-Shirt', 29.99, 'images/kids_tshirt.jpg'),
+('S005', 20, 'Shoe', 'Running Shoes', 199.00, 'images/running_shoes.jpg');
 
 --
 -- Indexes for dumped tables

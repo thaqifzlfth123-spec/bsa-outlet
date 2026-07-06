@@ -36,6 +36,7 @@ $stockName = mysqli_real_escape_string($dbconnect, $input['name'] ?? '');
 $stockPrice = mysqli_real_escape_string($dbconnect, $input['price'] ?? 0);
 $stockCategory = mysqli_real_escape_string($dbconnect, $input['category'] ?? '');
 $stockQuantity = mysqli_real_escape_string($dbconnect, $input['quantity'] ?? 0);
+$imageUrl = mysqli_real_escape_string($dbconnect, $input['imageUrl'] ?? '');
 
 if (empty($stockName) || empty($stockCategory)) {
     echo json_encode(['success' => false, 'message' => 'Product name and category required']);
@@ -44,10 +45,8 @@ if (empty($stockName) || empty($stockCategory)) {
 
 $nextId = generateNextId($dbconnect);
 
-// Note: stock table has StockID, StockQuantity, StockCategory
-// Need to add StockName and StockPrice columns
-$sql = "INSERT INTO stock (StockID, StockName, StockQuantity, StockCategory, StockPrice) 
-        VALUES ('$nextId', '$stockName', '$stockQuantity', '$stockCategory', '$stockPrice')";
+$sql = "INSERT INTO stock (StockID, StockName, StockQuantity, StockCategory, StockPrice, ImageURL) 
+        VALUES ('$nextId', '$stockName', '$stockQuantity', '$stockCategory', '$stockPrice', '$imageUrl')";
 
 $result = mysqli_query($dbconnect, $sql);
 

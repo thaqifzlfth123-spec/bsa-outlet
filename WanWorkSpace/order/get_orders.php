@@ -18,7 +18,7 @@ $sql = "SELECT o.OrderID, o.OrderDate, o.OrderAmount, o.OrderStatus, o.Quantity,
                o.CustomerID, o.CustomerName, c.CustomerEmail, c.CustomerPhone, c.IsMember,
                o.EmployeeID, o.EmployeeName,
                s.StockID, s.StockName, s.StockCategory
-        FROM \`order\` o
+        FROM `order` o
         LEFT JOIN stock s ON o.StockID = s.StockID
         LEFT JOIN customer c ON o.CustomerID = c.CustomerID";
 $result = mysqli_query($dbconnect, $sql);
