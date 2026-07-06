@@ -98,8 +98,12 @@ function openCartModal(id, name, price) {
     document.getElementById('modalQty').textContent = _modalQty;
     document.getElementById('modalSubtotal').textContent = 'RM ' + (_modalItemPrice * _modalQty).toFixed(2);
 
-    const modal = new bootstrap.Modal(document.getElementById('cartModal'));
-    modal.show();
+    if (typeof loadProductReviews === 'function') {
+        loadProductReviews(id);
+    }
+
+    const cartModal = new bootstrap.Modal(document.getElementById('cartModal'));
+    cartModal.show();
 }
 
 function changeQty(delta) {
@@ -130,10 +134,14 @@ function confirmAddToCart() {
     alert(_modalItemName + ' (x' + _modalQty + ') added to cart!');
 }
 
-// ---------------- PRODUCTS ----------------
+// ---------------- PRODUCTS & FILTERING ----------------
+window.allProducts = [];
+window.currentCategory = '';
+
 async function loadProducts(category) {
     const container = document.getElementById('productsContainer');
     if (!container) return;
+    window.currentCategory = category;
 
     container.innerHTML = '<div class="col-12 text-center"><p>Loading products...</p></div>';
 
@@ -142,41 +150,75 @@ async function loadProducts(category) {
         const data = await response.json();
 
         if (data.success && data.stock) {
-            const products = data.stock.filter(item => item.StockCategory === category);
-
-            if (products.length === 0) {
-                container.innerHTML = '<div class="col-12 text-center"><p>No products found for this category.</p></div>';
-                return;
-            }
-
-            container.innerHTML = '';
-            products.forEach(p => {
-                const price = parseFloat(p.StockPrice).toFixed(2);
-                const imgHTML = p.ImageURL 
-                    ? `<img src="${p.ImageURL}" alt="${p.StockName}" style="width:100%; height:100%; object-fit:cover; border-radius:10px;">` 
-                    : `<span style="font-size:3rem;">&#128255;</span>`;
-                const card = document.createElement('div');
-                card.className = 'col-lg-4 col-md-6';
-                card.innerHTML = `
-                    <div class="product-card">
-                        <div class="product-img">
-                            ${imgHTML}
-                        </div>
-                        <h4>${p.StockName}</h4>
-                        <p>Premium quality item. Stock: ${p.StockQuantity}</p>
-                        <h5>RM ${price}</h5>
-                        <button class="btn btn-warning w-100" onclick="openCartModal('${p.StockID}', '${p.StockName}', ${price})">Add to Cart</button>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
+            window.allProducts = data.stock.filter(item => item.StockCategory === category);
+            renderProducts(window.allProducts);
         } else {
             container.innerHTML = '<div class="col-12 text-center"><p>Could not load products.</p></div>';
         }
     } catch (error) {
         console.error('loadProducts error:', error);
-        container.innerHTML = '<div class="col-12 text-center text-danger"><p>Error: Could not connect to the server. Make sure XAMPP is running.</p></div>';
+        container.innerHTML = '<div class="col-12 text-center text-danger"><p>Error: Could not connect to the server.</p></div>';
     }
+}
+
+function renderProducts(products) {
+    const container = document.getElementById('productsContainer');
+    if (!container) return;
+
+    if (products.length === 0) {
+        container.innerHTML = '<div class="col-12 text-center"><p>No products found matching your criteria.</p></div>';
+        return;
+    }
+
+    container.innerHTML = '';
+    products.forEach(p => {
+        const price = parseFloat(p.StockPrice).toFixed(2);
+        const imgHTML = p.ImageURL 
+            ? `<img src="${p.ImageURL}" alt="${p.StockName}" style="width:100%; height:100%; object-fit:cover; border-radius:10px;">` 
+            : `<span style="font-size:3rem;">&#128255;</span>`;
+        const card = document.createElement('div');
+        card.className = 'col-lg-4 col-md-6';
+        card.innerHTML = `
+            <div class="product-card">
+                <div class="product-img">
+                    ${imgHTML}
+                </div>
+                <h4>${p.StockName}</h4>
+                <p>Premium quality item. Stock: ${p.StockQuantity}</p>
+                <h5>RM ${price}</h5>
+                <button class="btn btn-warning w-100" onclick="openCartModal('${p.StockID}', '${p.StockName}', ${price})">Add to Cart</button>
+            </div>
+        `;
+        container.appendChild(card);
+    });
+}
+
+function filterProducts() {
+    const searchInput = document.getElementById('searchInput');
+    const priceRange = document.getElementById('priceRange');
+    if (!searchInput || !priceRange) return;
+
+    const searchTerm = searchInput.value.toLowerCase();
+    const maxPrice = parseFloat(priceRange.value);
+
+    const filtered = window.allProducts.filter(p => {
+        const matchesSearch = p.StockName.toLowerCase().includes(searchTerm);
+        const matchesPrice = parseFloat(p.StockPrice) <= maxPrice;
+        return matchesSearch && matchesPrice;
+    });
+
+    renderProducts(filtered);
+}
+
+function resetFilters() {
+    const searchInput = document.getElementById('searchInput');
+    const priceRange = document.getElementById('priceRange');
+    if (searchInput) searchInput.value = '';
+    if (priceRange) {
+        priceRange.value = 500;
+        document.getElementById('priceVal').textContent = 500;
+    }
+    renderProducts(window.allProducts);
 }
 
 // ---------------- CART ----------------
@@ -768,6 +810,210 @@ async function updateCustomerMembership(customerId) {
     }
 }
 
+// ---------------- CUSTOMER PROFILE & REWARDS ----------------
+async function loadUserProfile() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser) {
+        window.location.href = 'index.html';
+        return;
+    }
+    
+    document.getElementById('profileGreeting').innerText = `Hello, ${currentUser.name}`;
+
+    try {
+        const response = await fetch(`../WanWorkSpace/customer/get_customer_details.php?customerID=${currentUser.id}`);
+        const data = await response.json();
+        if (data.success && data.customer) {
+            const c = data.customer;
+            const profName = document.getElementById('profName');
+            if (profName) {
+                profName.value = c.CustomerName || '';
+                document.getElementById('profEmail').value = c.CustomerEmail || '';
+                document.getElementById('profPhone').value = c.CustomerPhone || '';
+                document.getElementById('profAddress').value = c.CustomerAddress || '';
+            }
+
+            const rewardLevel = document.getElementById('rewardLevel');
+            if (rewardLevel) {
+                rewardLevel.innerText = c.MembershipLevel || 'Non-Member';
+                document.getElementById('rewardPoints').innerText = c.Points || '0';
+                
+                let pts = parseInt(c.Points) || 0;
+                let percent = 0;
+                let nextMsg = "";
+                if (c.MembershipLevel === 'Non-Member' || !c.MembershipLevel) {
+                    percent = Math.min((pts / 100) * 100, 100);
+                    nextMsg = `${Math.max(100 - pts, 0)} points to Standard Member`;
+                } else if (c.MembershipLevel === 'Standard') {
+                    percent = Math.min((pts / 500) * 100, 100);
+                    nextMsg = `${Math.max(500 - pts, 0)} points to Premium Member`;
+                } else if (c.MembershipLevel === 'Premium') {
+                    percent = Math.min((pts / 1000) * 100, 100);
+                    nextMsg = `${Math.max(1000 - pts, 0)} points to VIP`;
+                } else {
+                    percent = 100;
+                    nextMsg = "You are a VIP! Enjoy maximum benefits.";
+                }
+                if (pts >= 1000) percent = 100;
+                document.getElementById('rewardProgress').style.width = percent + '%';
+                document.getElementById('rewardNextTier').innerText = nextMsg;
+            }
+        }
+    } catch (err) {
+        console.error('loadUserProfile error', err);
+    }
+}
+
+const profileForm = document.getElementById('profileForm');
+if (profileForm) {
+    profileForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        const payload = {
+            customerID: currentUser.id,
+            name: document.getElementById('profName').value,
+            email: document.getElementById('profEmail').value,
+            phone: document.getElementById('profPhone').value,
+            address: document.getElementById('profAddress').value
+        };
+        try {
+            const response = await fetch('../WanWorkSpace/customer/update_profile.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const data = await response.json();
+            if (data.success) {
+                alert('Profile updated successfully!');
+                currentUser.name = payload.name;
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                document.getElementById('profileGreeting').innerText = `Hello, ${payload.name}`;
+            } else {
+                alert('Error updating profile: ' + data.message);
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Network error.');
+        }
+    });
+}
+
+async function loadUserOrders() {
+    const tbody = document.getElementById('customerOrdersBody');
+    if (!tbody) return;
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser) return;
+    
+    try {
+        const response = await fetch(`../WanWorkSpace/order/get_customer_orders.php?customerID=${currentUser.id}`);
+        const data = await response.json();
+        
+        if (data.success && data.orders && data.orders.length > 0) {
+            tbody.innerHTML = '';
+            data.orders.forEach(o => {
+                let badgeClass = 'secondary';
+                if (o.OrderStatus === 'Pending') badgeClass = 'warning';
+                if (o.OrderStatus === 'Processing') badgeClass = 'info';
+                if (o.OrderStatus === 'Shipped') badgeClass = 'primary';
+                if (o.OrderStatus === 'Delivered') badgeClass = 'success';
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${o.OrderID}</td>
+                        <td>${o.OrderDate}</td>
+                        <td>
+                            <img src="${o.ImageURL || ''}" width="40" height="40" style="object-fit:cover; border-radius:5px;" class="me-2">
+                            ${o.StockName} (x${o.Quantity})
+                        </td>
+                        <td>RM ${o.OrderAmount}</td>
+                        <td><span class="badge bg-${badgeClass}">${o.OrderStatus}</span></td>
+                    </tr>
+                `;
+            });
+            if ($.fn.DataTable.isDataTable('#customerOrdersTable')) {
+                $('#customerOrdersTable').DataTable().destroy();
+            }
+            $('#customerOrdersTable').DataTable({ dom: 'rtip' });
+        } else {
+            tbody.innerHTML = '<tr><td colspan="5">No orders found.</td></tr>';
+        }
+    } catch (error) {
+        console.error('loadUserOrders error', error);
+        tbody.innerHTML = '<tr><td colspan="5" class="text-danger">Failed to load orders.</td></tr>';
+    }
+}
+
+// ---------------- PRODUCT REVIEWS ----------------
+async function loadProductReviews(stockID) {
+    const container = document.getElementById('productReviewsContainer');
+    const addReviewSec = document.getElementById('addReviewSection');
+    if (!container) return;
+    
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (currentUser && currentUser.type === 'customer') {
+        addReviewSec.style.display = 'block';
+    } else {
+        addReviewSec.style.display = 'none';
+    }
+    
+    container.innerHTML = '<p class="text-center text-muted">Loading...</p>';
+    try {
+        const response = await fetch(`../WanWorkSpace/stock/get_reviews.php?stockID=${stockID}`);
+        const data = await response.json();
+        if (data.success && data.reviews.length > 0) {
+            container.innerHTML = '';
+            container.innerHTML += `<div class="mb-2 text-center text-warning fw-bold">Average Rating: ${data.average} ⭐</div>`;
+            data.reviews.forEach(r => {
+                let stars = '⭐'.repeat(r.Rating);
+                container.innerHTML += `
+                    <div class="card mb-2 border-0 shadow-sm">
+                        <div class="card-body p-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <strong class="small">${r.CustomerName || 'Anonymous'}</strong>
+                                <span class="small text-muted">${r.ReviewDate.split(' ')[0]}</span>
+                            </div>
+                            <div class="text-warning small">${stars}</div>
+                            <p class="mb-0 small mt-1">${r.Comment || ''}</p>
+                        </div>
+                    </div>
+                `;
+            });
+        } else {
+            container.innerHTML = '<p class="text-center text-muted mb-0">No reviews yet. Be the first to review!</p>';
+        }
+    } catch (e) {
+        container.innerHTML = '<p class="text-center text-danger mb-0">Error loading reviews.</p>';
+    }
+}
+
+async function submitReview() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser) return alert("Please login first.");
+    
+    const rating = document.getElementById('reviewRating').value;
+    const comment = document.getElementById('reviewComment').value;
+    const stockID = _modalItemId;
+    
+    if (!stockID) return;
+    
+    try {
+        const response = await fetch('../WanWorkSpace/stock/add_review.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ stockID, customerID: currentUser.id, rating, comment })
+        });
+        const data = await response.json();
+        if (data.success) {
+            document.getElementById('reviewComment').value = '';
+            loadProductReviews(stockID);
+        } else {
+            alert(data.message);
+        }
+    } catch (e) {
+        alert("Failed to submit review.");
+    }
+}
+
 // ---------------- INIT ----------------
 document.addEventListener('DOMContentLoaded', function() {
     const path = window.location.pathname;
@@ -777,6 +1023,10 @@ document.addEventListener('DOMContentLoaded', function() {
     if (path.includes('shoe.html'))       loadProducts('Shoe');
     if (path.includes('cart.html'))       loadCart();
     if (path.includes('receipt.html'))    loadReceipt();
+    if (path.includes('profile.html')) {
+        loadUserProfile();
+        loadUserOrders();
+    }
     
     // Employee views
     if (path.includes('employee_home.html')) {
