@@ -14,17 +14,21 @@ if (!$dbconnect) {
     exit;
 }
 
-$sql = "SELECT f.FeedbackID, f.FeedbackDate, f.OrderID, f.CustomerID,
-               c.CustomerName
-        FROM feedback f
-        LEFT JOIN customer c ON f.CustomerID = c.CustomerID";
+$sql = "SELECT f.FeedbackID, f.FeedbackDate, f.OrderID, f.CustomerID, f.Message, c.CustomerName 
+        FROM feedback f 
+        LEFT JOIN customer c ON f.CustomerID = c.CustomerID 
+        ORDER BY f.FeedbackID DESC";
 $result = mysqli_query($dbconnect, $sql);
 
-$feedback = [];
-while ($row = mysqli_fetch_assoc($result)) {
-    $feedback[] = $row;
+$feedbacks = [];
+if ($result) {
+    while ($row = mysqli_fetch_assoc($result)) {
+        $feedbacks[] = $row;
+    }
+    echo json_encode(['success' => true, 'feedbacks' => $feedbacks]);
+} else {
+    echo json_encode(['success' => false, 'message' => 'Failed to fetch feedback']);
 }
 
-echo json_encode(['success' => true, 'feedback' => $feedback]);
 mysqli_close($dbconnect);
 ?>

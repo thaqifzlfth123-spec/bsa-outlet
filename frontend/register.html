@@ -1,79 +1,294 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BSA Outlet - Register</title>
-
+    <title>BSA Outlet — Register</title>
+    <meta name="description" content="Create your BSA Outlet account.">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css?v=11">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            font-family: 'Outfit', sans-serif;
+        }
+        @media (max-width: 991px) { body { overflow: auto; height: auto; } }
 
-    <link rel="stylesheet" href="css/style.css?v=5">
+        /* ---- LEFT PANEL ---- */
+        .panel-left {
+            width: 55%;
+            position: relative;
+            overflow: hidden;
+            background: #0f172a;
+        }
+        @media (max-width: 991px) { .panel-left { display: none; } }
+
+        .panel-left img.bg-photo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.55;
+            display: block;
+        }
+
+        .panel-left-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(10,15,30,0.85) 0%, rgba(10,15,30,0.1) 60%);
+        }
+
+        .panel-left-content {
+            position: absolute;
+            bottom: 52px;
+            left: 52px;
+            right: 52px;
+        }
+
+        .panel-left-content h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.6rem;
+            color: #fff;
+            line-height: 1.1;
+            margin-bottom: 14px;
+            font-weight: 600;
+        }
+
+        .panel-left-content p {
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.5);
+            line-height: 1.7;
+            max-width: 380px;
+            font-weight: 300;
+        }
+
+        /* ---- RIGHT PANEL ---- */
+        .panel-right {
+            width: 45%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 60px 64px;
+            background: #fff;
+            overflow-y: auto;
+        }
+        @media (max-width: 991px) {
+            .panel-right {
+                width: 100%;
+                padding: 50px 28px;
+            }
+        }
+
+        .right-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 48px;
+            letter-spacing: 0.5px;
+        }
+        .right-logo span { color: #fbbf24; }
+
+        .right-heading {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 6px;
+            font-family: 'Outfit', sans-serif;
+        }
+        .right-sub {
+            font-size: 0.88rem;
+            color: #94a3b8;
+            margin-bottom: 32px;
+        }
+
+        /* Toggle */
+        .type-toggle {
+            display: flex;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 28px;
+        }
+        .type-toggle input[type="radio"] { display: none; }
+        .toggle-label {
+            flex: 1;
+            text-align: center;
+            padding: 11px 16px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #64748b;
+            cursor: pointer;
+            background: #f8fafc;
+            border: none;
+            display: block;
+            transition: background 0.2s ease, color 0.2s ease;
+            user-select: none;
+        }
+        .toggle-label.active {
+            background: #0f172a;
+            color: #ffffff;
+        }
+
+        /* Inputs */
+        .field-label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 7px;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+        .field-input {
+            width: 100%;
+            padding: 11px 14px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #0f172a;
+            background: #f8fafc;
+            outline: none;
+            transition: border-color 0.2s ease, background 0.2s ease;
+            font-family: 'Outfit', sans-serif;
+        }
+        .field-input:focus {
+            border-color: #fbbf24;
+            background: #fff;
+        }
+        .field-input::placeholder { color: #cbd5e1; }
+
+        .field-group { margin-bottom: 18px; }
+
+        /* Buttons */
+        .btn-submit {
+            width: 100%;
+            padding: 13px;
+            background: #0f172a;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.15s ease;
+            font-family: 'Outfit', sans-serif;
+            margin-bottom: 10px;
+        }
+        .btn-submit:hover {
+            background: #1e293b;
+            transform: translateY(-1px);
+        }
+        .btn-submit:active { transform: translateY(0); }
+
+        .btn-clear {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            color: #64748b;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Outfit', sans-serif;
+        }
+        .btn-clear:hover {
+            border-color: #94a3b8;
+            color: #334155;
+        }
+
+        /* Sign in link */
+        .signin-link {
+            margin-top: 24px;
+            font-size: 0.85rem;
+            color: #94a3b8;
+            text-align: center;
+        }
+        .signin-link a {
+            color: #0f172a;
+            font-weight: 600;
+            text-decoration: none;
+            border-bottom: 1.5px solid #fbbf24;
+            padding-bottom: 1px;
+        }
+        .signin-link a:hover { color: #fbbf24; }
+    </style>
 </head>
 <body>
 
-<div class="container-fluid login-section">
-    <div class="row min-vh-100">
+    <!-- LEFT PANEL -->
+    <div class="panel-left">
+        <img class="bg-photo" src="images/general/hero_bg.png" alt="BSA Outlet">
+        <div class="panel-left-overlay"></div>
+        <div class="panel-left-content">
+            <h1>Join the<br>community.</h1>
+            <p>Create your account and start exploring menswear, womenswear, kids and footwear — all in one place.</p>
+        </div>
+    </div>
 
-        <div class="col-lg-6 d-none d-lg-flex hero-section">
-            <div>
-                <h1>BSA Outlet</h1>
-                <p>Create your account</p>
-            </div>
+    <!-- RIGHT PANEL -->
+    <div class="panel-right">
+
+        <div class="right-logo">BSA <span>Outlet</span></div>
+
+        <h2 class="right-heading" id="registerHeading">Create Customer account</h2>
+        <p class="right-sub">Fill in your details to get started.</p>
+
+        <!-- Customer / Staff toggle -->
+        <div class="type-toggle">
+            <input type="radio" name="userType" id="customer" checked>
+            <span class="toggle-label active" onclick="selectType('customer')">Customer</span>
+            <input type="radio" name="userType" id="staff">
+            <span class="toggle-label" onclick="selectType('staff')">Staff</span>
         </div>
 
-        <div class="col-lg-6 d-flex align-items-center justify-content-center">
-
-            <div class="login-card">
-
-                <h2 class="text-center mb-4">Registration</h2>
-
-                <div class="btn-group w-100 mb-4">
-                    <input type="radio" class="btn-check" name="userType" id="customer" checked>
-                    <label class="btn btn-outline-warning" for="customer">Customer</label>
-
-                    <input type="radio" class="btn-check" name="userType" id="staff">
-                    <label class="btn btn-outline-warning" for="staff">Staff</label>
-                </div>
-
-                <form id="registerForm">
-
-                    <div class="mb-3">
-                        <label>Full Name</label>
-                        <input type="text" id="regName" class="form-control" placeholder="Enter your full name" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label>Email / No. Phone</label>
-                        <input type="text" id="regEmail" class="form-control" placeholder="Enter email or phone number" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label>Password</label>
-                        <input type="password" id="regPassword" class="form-control" placeholder="Create password" required>
-                    </div>
-
-
-
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-warning w-50">Send</button>
-                        <button type="reset" class="btn btn-outline-dark w-50">Clear</button>
-                    </div>
-
-                </form>
-
-                <div class="text-center mt-4">
-                    Already have an account?
-                    <a href="index.html" class="link-warning">Sign In</a>
-                </div>
-
+        <!-- Form -->
+        <form id="registerForm">
+            <div class="field-group">
+                <label class="field-label" for="regName">Full Name</label>
+                <input class="field-input" type="text" id="regName" placeholder="Muhammad Thaqif" required>
+            </div>
+            <div class="field-group">
+                <label class="field-label" for="regEmail">Email</label>
+                <input class="field-input" type="text" id="regEmail" placeholder="your@email.com" required>
+            </div>
+            <div class="field-group">
+                <label class="field-label" for="regPassword">Password</label>
+                <input class="field-input" type="password" id="regPassword" placeholder="••••••••" required>
             </div>
 
+            <button type="submit" class="btn-submit">Create Account</button>
+            <button type="reset" class="btn-clear">Clear</button>
+        </form>
+
+        <div class="signin-link">
+            Already have an account? <a href="index.html">Sign in</a>
         </div>
 
     </div>
-</div>
 
-<script src="js/script.js?v=8"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/script.js?v=11"></script>
+<script>
+    function selectType(type) {
+        document.getElementById('customer').checked = (type === 'customer');
+        document.getElementById('staff').checked = (type === 'staff');
+        document.querySelectorAll('.toggle-label').forEach(el => el.classList.remove('active'));
+        event.currentTarget.classList.add('active');
+        
+        const heading = document.getElementById('registerHeading');
+        if (heading) {
+            heading.innerText = type === 'customer' ? 'Create Customer account' : 'Create Staff account';
+        }
+    }
+</script>
 </body>
 </html>

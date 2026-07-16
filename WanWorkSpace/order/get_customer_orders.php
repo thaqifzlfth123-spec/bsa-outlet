@@ -14,13 +14,20 @@ if (!$dbconnect) {
     exit;
 }
 
+$customerId = isset($_GET['customerId']) ? mysqli_real_escape_string($dbconnect, $_GET['customerId']) : '';
+
+if (empty($customerId)) {
+    echo json_encode(['success' => false, 'message' => 'Customer ID required']);
+    exit;
+}
+
 $sql = "SELECT o.OrderID, o.OrderDate, o.OrderAmount, o.OrderStatus, o.Quantity, o.Size, o.Colour, o.DeliveryType,
-               o.CustomerID, o.CustomerName, c.CustomerEmail, c.CustomerPhone, c.IsMember,
-               o.EmployeeID, o.EmployeeName,
                s.StockID, s.StockName, s.StockCategory
         FROM `order` o
         LEFT JOIN stock s ON o.StockID = s.StockID
-        LEFT JOIN customer c ON o.CustomerID = c.CustomerID";
+        WHERE o.CustomerID = '$customerId'
+        ORDER BY o.OrderDate DESC";
+        
 $result = mysqli_query($dbconnect, $sql);
 
 $orders = [];

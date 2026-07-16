@@ -1,66 +1,226 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BSA Outlet - Member Verification</title>
-
+    <title>BSA Outlet — Member Verification</title>
+    <meta name="description" content="Join the BSA Outlet membership.">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css?v=11">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            font-family: 'Outfit', sans-serif;
+        }
+        @media (max-width: 991px) { body { overflow: auto; height: auto; } }
 
-    <link rel="stylesheet" href="css/style.css?v=5">
+        /* ---- LEFT PANEL ---- */
+        .panel-left {
+            width: 55%;
+            position: relative;
+            overflow: hidden;
+            background: #0f172a;
+        }
+        @media (max-width: 991px) { .panel-left { display: none; } }
+
+        .panel-left img.bg-photo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.55;
+            display: block;
+        }
+
+        .panel-left-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(10,15,30,0.85) 0%, rgba(10,15,30,0.1) 60%);
+        }
+
+        .panel-left-content {
+            position: absolute;
+            bottom: 52px;
+            left: 52px;
+            right: 52px;
+        }
+
+        .panel-left-content h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.6rem;
+            color: #fff;
+            line-height: 1.1;
+            margin-bottom: 14px;
+            font-weight: 600;
+        }
+
+        .panel-left-content p {
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.5);
+            line-height: 1.7;
+            max-width: 380px;
+            font-weight: 300;
+        }
+
+        /* ---- RIGHT PANEL ---- */
+        .panel-right {
+            width: 45%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 60px 64px;
+            background: #fff;
+            overflow-y: auto;
+        }
+        @media (max-width: 991px) {
+            .panel-right {
+                width: 100%;
+                padding: 50px 28px;
+            }
+        }
+
+        .right-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 48px;
+            letter-spacing: 0.5px;
+        }
+        .right-logo span { color: #fbbf24; }
+
+        .right-heading {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 6px;
+            font-family: 'Outfit', sans-serif;
+        }
+        .right-sub {
+            font-size: 0.88rem;
+            color: #94a3b8;
+            margin-bottom: 32px;
+            line-height: 1.5;
+        }
+
+        /* Inputs */
+        .field-label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 7px;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+        .field-input {
+            width: 100%;
+            padding: 11px 14px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #0f172a;
+            background: #f8fafc;
+            outline: none;
+            transition: border-color 0.2s ease, background 0.2s ease;
+            font-family: 'Outfit', sans-serif;
+        }
+        .field-input:focus {
+            border-color: #fbbf24;
+            background: #fff;
+        }
+        .field-input::placeholder { color: #cbd5e1; }
+
+        .field-group { margin-bottom: 18px; }
+
+        /* Buttons */
+        .btn-submit {
+            width: 100%;
+            padding: 13px;
+            background: #0f172a;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.15s ease;
+            font-family: 'Outfit', sans-serif;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        .btn-submit:hover {
+            background: #1e293b;
+            transform: translateY(-1px);
+        }
+        .btn-submit:active { transform: translateY(0); }
+
+        .btn-skip {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            color: #64748b;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Outfit', sans-serif;
+            text-decoration: none;
+            text-align: center;
+            display: inline-block;
+        }
+        .btn-skip:hover {
+            border-color: #94a3b8;
+            color: #334155;
+        }
+    </style>
 </head>
 <body>
 
-<div class="container-fluid login-section">
-    <div class="row min-vh-100">
-
-        <div class="col-lg-6 d-none d-lg-flex hero-section">
-            <div>
-                <h1>BSA Outlet</h1>
-                <p>Join our membership</p>
-            </div>
+    <!-- LEFT PANEL -->
+    <div class="panel-left">
+        <img class="bg-photo" src="images/general/hero_bg.png" alt="BSA Outlet">
+        <div class="panel-left-overlay"></div>
+        <div class="panel-left-content">
+            <h1>Elevate your<br>experience.</h1>
+            <p>Become a member to enjoy special updates, better shopping experiences, and an automatic RM 10 off every item you purchase.</p>
         </div>
+    </div>
 
-        <div class="col-lg-6 d-flex align-items-center justify-content-center">
+    <!-- RIGHT PANEL -->
+    <div class="panel-right">
 
-            <div class="login-card">
+        <div class="right-logo">BSA <span>Outlet</span></div>
 
-                <h2 class="text-center mb-3">Get a Verification</h2>
+        <h2 class="right-heading">Get Verified</h2>
+        <p class="right-sub">Become a member today and unlock exclusive benefits.</p>
 
-                <p class="text-center text-muted mb-4">
-                    Become a member to enjoy special updates and better shopping experience.
-                </p>
-
-                <form id="memberForm">
-
-                    <div class="mb-3">
-                        <label>Name</label>
-                        <input type="text" id="memberName" class="form-control" placeholder="Enter your name" required>
-                    </div>
-
-                    <div class="mb-4">
-                        <label>Email</label>
-                        <input type="email" id="memberEmail" class="form-control" placeholder="Enter your email" required>
-                    </div>
-
-                    <button type="submit" class="btn btn-warning w-100 mb-3">
-                        Send Verification
-                    </button>
-
-                    <a href="home.html" class="btn btn-outline-dark w-100">
-                        Skip for Now
-                    </a>
-
-                </form>
-
+        <!-- Form -->
+        <form id="memberForm">
+            <div class="field-group">
+                <label class="field-label" for="memberName">Full Name</label>
+                <input class="field-input" type="text" id="memberName" placeholder="Enter your name" required>
+            </div>
+            <div class="field-group">
+                <label class="field-label" for="memberEmail">Email</label>
+                <input class="field-input" type="email" id="memberEmail" placeholder="your@email.com" required>
             </div>
 
-        </div>
+            <button type="submit" class="btn-submit">Send Verification</button>
+            <a href="home.html" class="btn-skip">Skip for Now</a>
+        </form>
 
     </div>
-</div>
 
-<script src="js/script.js?v=7"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/script.js?v=11"></script>
 </body>
 </html>

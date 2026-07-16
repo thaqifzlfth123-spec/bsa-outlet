@@ -5,11 +5,69 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BSA Outlet - Order Receipt</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=5">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css?v=6">
+    <style>
+        body { background-color: #f1f5f9; }
+        .receipt-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            position: relative;
+            overflow: hidden;
+            margin-top: 2rem;
+            padding: 3rem;
+        }
+        .receipt-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 8px;
+            background: repeating-linear-gradient(45deg, var(--primary), var(--primary) 10px, transparent 10px, transparent 20px);
+        }
+        .receipt-card::after {
+            content: '';
+            position: absolute;
+            bottom: -10px; left: 0; right: 0;
+            height: 20px;
+            background-size: 20px 20px;
+            background-image: radial-gradient(circle at 10px 0px, transparent 10px, #fff 11px);
+        }
+        .receipt-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .receipt-details {
+            border-top: 2px dashed #e2e8f0;
+            border-bottom: 2px dashed #e2e8f0;
+            padding: 2rem 0;
+            margin: 2rem 0;
+        }
+        .receipt-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.8rem;
+            font-size: 1.1rem;
+        }
+        .receipt-line.total {
+            font-weight: 700;
+            font-size: 1.4rem;
+            color: var(--primary);
+            margin-top: 1rem;
+        }
+        @media print {
+            body { background: white; }
+            .no-print, .custom-navbar, .footer, .btn { display: none !important; }
+            .receipt-card { box-shadow: none; padding: 0; border: none; margin-top: 0; }
+            .receipt-card::after { display: none; }
+        }
+    </style>
 </head>
 <body class="d-flex flex-column min-vh-100">
 
-<nav class="navbar navbar-expand-lg navbar-dark custom-navbar">
+<nav class="navbar navbar-expand-lg navbar-dark custom-navbar no-print">
     <div class="container">
         <a class="navbar-brand fw-bold" href="home.html">BSA Outlet</a>
         <ul class="navbar-nav ms-auto">
@@ -18,57 +76,80 @@
     </div>
 </nav>
 
-<section class="container py-5 mt-5">
+<section class="container py-4 flex-grow-1">
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6">
-            <div class="card shadow-sm border-0 p-5 text-center" style="border-radius: 20px;">
-                <h1 class="text-success mb-3" style="font-size: 4rem;">&#10004;</h1>
-                <h2 class="fw-bold mb-4">Payment Successful!</h2>
-                <p class="text-muted mb-4">Thank you for your purchase. Your order has been placed successfully.</p>
+            
+            <div class="receipt-card text-center mb-5">
+                <div class="mb-4">
+                    <div class="text-success mb-2" style="font-size: 3rem; line-height: 1;">&#10004;</div>
+                    <div class="receipt-logo">BSA Outlet</div>
+                    <p class="text-muted mt-2">Payment Successful</p>
+                </div>
+
+                <p class="text-muted mb-4 px-3">Thank you for your purchase. Your order has been placed successfully.</p>
                 
-                <div class="bg-light p-4 rounded mb-4 text-start">
-                    <h4>Receipt Details</h4>
-                    <hr>
-                    <p class="mb-1"><strong>Order ID:</strong> <span id="receiptOrderId">#---</span></p>
-                    <p class="mb-1"><strong>Total Amount:</strong> <span id="receiptTotal">RM 0.00</span></p>
-                    <p class="mb-1"><strong>Status:</strong> Pending Approval</p>
+                <div class="receipt-details text-start">
+                    <div class="receipt-line">
+                        <span class="text-muted">Order ID:</span>
+                        <span id="receiptOrderId" class="fw-bold">#---</span>
+                    </div>
+                    <div class="receipt-line">
+                        <span class="text-muted">Status:</span>
+                        <span class="fw-bold text-warning">Pending Approval</span>
+                    </div>
+                    <div id="receiptDiscountContainer">
+                        <div id="receiptDiscount"></div>
+                    </div>
+                    <div class="receipt-line total">
+                        <span>Total Amount:</span>
+                        <span id="receiptTotal">RM 0.00</span>
+                    </div>
                 </div>
                 
-                <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
-                    <button class="btn btn-outline-primary px-4" onclick="window.print()">Download Receipt</button>
-                    <button class="btn btn-warning px-4" data-bs-toggle="modal" data-bs-target="#feedbackModal">Give Feedback</button>
+                <p class="text-muted small mb-4">Please keep this receipt for your records.</p>
+
+                <div class="d-grid gap-3 d-sm-flex justify-content-sm-center no-print">
+                    <button class="btn btn-outline-dark px-4 py-2" onclick="window.print()">
+                        <i class="bi bi-printer me-2"></i> Download Receipt
+                    </button>
+                    <!-- Give Feedback button is hidden since it pops up automatically, but we keep it here just in case -->
+                    <button class="btn btn-warning px-4 py-2" data-bs-toggle="modal" data-bs-target="#feedbackModal">
+                        Give Feedback
+                    </button>
                 </div>
             </div>
+
         </div>
     </div>
 </section>
 
 <!-- Feedback Modal -->
-<div class="modal fade" id="feedbackModal" tabindex="-1">
+<div class="modal fade no-print" id="feedbackModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header border-0">
-        <h5 class="modal-title fw-bold">Leave Feedback</h5>
+    <div class="modal-content border-0 shadow-lg" style="border-radius: 12px;">
+      <div class="modal-header bg-light border-0 px-4 pt-4">
+        <h5 class="modal-title fw-bold" style="font-family: 'Playfair Display', serif; font-size: 1.5rem;">How did we do?</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body">
+      <div class="modal-body px-4 pb-4">
+        <p class="text-muted mb-4">We'd love to hear about your shopping experience with us.</p>
         <form id="feedbackForm">
-          <div class="mb-3">
-            <label class="form-label text-muted">How was your experience?</label>
-            <textarea class="form-control" id="feedbackMessage" rows="4" required></textarea>
+          <div class="mb-4">
+            <textarea class="form-control bg-light border-0 p-3" id="feedbackMessage" rows="4" placeholder="Write your feedback here..." required style="border-radius: 10px;"></textarea>
           </div>
-          <button type="submit" class="btn btn-warning w-100">Submit Feedback</button>
+          <button type="submit" class="btn btn-dark w-100 py-3 rounded-pill fw-bold">Submit Feedback</button>
         </form>
       </div>
     </div>
   </div>
 </div>
 
-<footer class="footer mt-auto">
-    <p>© 2026 BSA Outlet. All Rights Reserved.</p>
+<footer class="footer mt-auto no-print">
+    <p>&copy; 2026 BSA Outlet. All Rights Reserved.</p>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="js/script.js?v=7"></script>
+<script src="js/script.js?v=8"></script>
 </body>
 </html>

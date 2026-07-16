@@ -29,7 +29,7 @@
                 <li class="nav-item"><a class="nav-link" href="shoe.html">Shoe</a></li>
                 <li class="nav-item"><a class="nav-link active" href="cart.html">Cart</a></li>
                 <li class="nav-item"><a class="nav-link" href="member.html">Membership</a></li>
-                <li class="nav-item"><a class="nav-link text-warning" href="#" onclick="logout()">Logout</a></li>
+                <li class="nav-item"><a class="nav-link text-warning" href="#" onclick="logout()">Logout</a></li><li class="nav-item"><a class="nav-link" href="#" onclick="toggleDarkMode()" id="darkModeIcon" style="cursor:pointer;">??</a></li>
             </ul>
         </div>
     </div>
@@ -74,14 +74,26 @@
 
     <div class="card p-4 mt-4 border-0 shadow-sm" style="border-radius:12px;">
         <h5 class="fw-bold mb-3">Delivery Options</h5>
-        <div class="d-flex gap-4 mb-4">
+        <div class="d-flex gap-4 mb-3">
             <div class="form-check">
-                <input class="form-check-input" type="radio" name="deliveryType" id="pickUp" value="Pick Up" checked>
-                <label class="form-check-label" for="pickUp">Pick Up</label>
+                <input class="form-check-input" type="radio" name="deliveryType" id="pickUp" value="Pick Up" checked onchange="toggleDeliveryOptions()">
+                <label class="form-check-label" for="pickUp">Pick Up (Free)</label>
             </div>
             <div class="form-check">
-                <input class="form-check-input" type="radio" name="deliveryType" id="delivery" value="Delivery">
+                <input class="form-check-input" type="radio" name="deliveryType" id="delivery" value="Delivery" onchange="toggleDeliveryOptions()">
                 <label class="form-check-label" for="delivery">Delivery</label>
+            </div>
+        </div>
+        
+        <div id="deliveryRegionContainer" style="display: none; transition: 0.3s;" class="mb-4 bg-light p-3 rounded">
+            <label class="form-label fw-bold">Select Delivery Region</label>
+            <select class="form-select mb-2" id="deliveryRegion" onchange="loadCart()">
+                <option value="5">Melaka, Johor, Negeri Sembilan (+ RM 5.00)</option>
+                <option value="10">Other Peninsular Malaysia (+ RM 10.00)</option>
+                <option value="15">Sabah & Sarawak (+ RM 15.00)</option>
+            </select>
+            <div class="alert alert-info py-2 px-3 mb-0" style="font-size: 0.85rem;">
+                Delivery fees apply based on your region. Melaka/Johor/Negeri Sembilan: <strong>+RM5</strong>, other Peninsular areas: <strong>+RM10</strong>, Sabah & Sarawak: <strong>+RM15</strong>.
             </div>
         </div>
         <div class="d-flex gap-2 flex-column flex-md-row">
@@ -100,3 +112,4 @@
 <script src="js/script.js?v=7"></script>
 </body>
 </html>
+
